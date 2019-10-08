@@ -1,0 +1,7 @@
+p #{@user.first_name}, "Anonymous feedback on how you view #{@user.name} as a leader" survey has a new response.
+p You can view complete results #{link_to 'here', profile_team_survey_360_url(user_email: @user.email, user_token: @user.issue_new_authentication_token_and_return)}.
+
+small
+  = do_not_forward_email_footer_message
+
+= leaderbot_footer_message

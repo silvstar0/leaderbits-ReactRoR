@@ -1,0 +1,31 @@
+- content_for(:page_title, 'Admin : Tags')
+.row.full-width
+  .medium-6.columns
+    h1 Tags
+
+.row.full-width
+  .large-12.columns
+    table.index width="100%"
+      thead
+        tr
+          th Name
+          th
+
+      tbody
+        - @tags.each do |tag|
+          tr
+            td= tag
+            td.text-center.action
+              ul.button-group.actions.even
+                - if Admin::TagPolicy.new(current_user, tag).show?
+                  li
+                    = link_to admin_tag_path(tag), title: 'View', class: 'button info', style: 'text-align: left' do
+                      = fa_icon 'eye'
+                      | &nbsp; View
+
+                - if Admin::TagPolicy.new(current_user, tag).edit?
+                  li
+                    = link_to edit_admin_tag_path(tag), title: 'Edit', class: 'button secondary', style: 'text-align: left' do
+                      = fa_icon 'edit'
+                      | &nbsp; Edit
+

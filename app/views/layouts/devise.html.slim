@@ -1,0 +1,15 @@
+doctype html
+html lang="en"
+  head
+    = render 'shared/common_head'
+
+  - #TODO this is not devise-only related anymore
+  - content_for(:extra_body_classes, 'devise')
+  body class=extended_body_class
+    .row
+      .small-10.small-centered.medium-6.medium-centered.columns.logo-container.top-header-section
+        = link_to new_session_path(:user) do
+          = image_tag "leaderbits_logo_horizontal_gray.png"
+        end
+    == yield
+    = javascript_tag yield(:javascript)

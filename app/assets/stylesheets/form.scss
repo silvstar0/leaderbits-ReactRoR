@@ -1,0 +1,88 @@
+@import 'settings';
+
+.payment-errors.error {
+  background-color: #f00;
+  color: #fff;
+  display: block;
+  margin: 8px;
+  padding: 8px;
+}
+
+.field_with_hint {
+  span.hint {
+    font-size: 12px;
+    font-style: italic;
+    position: relative;
+  }
+}
+
+.field_with_errors {
+  span.error {
+    background-color: $alert-color;
+    color: #fff;
+    display: block;
+    padding: 3px 9px;
+    position: relative;
+    top: -1em;
+  }
+}
+
+.error_notification {
+  background-color: #ffffe0;
+  margin-bottom: 16px;
+  padding: 8px;
+}
+
+.system-alert {
+  background-color: $light-gray;
+  color: #fff;
+  margin: 0 auto;
+  padding: 9px;
+  text-align: center;
+
+  &.flash-alert {
+    background-color: $alert-color;
+  }
+
+  &.flash-error {
+    background-color: $warning-color;
+  }
+
+  &.flash-notice {
+    background-color: $success-color;
+  }
+}
+
+label {
+  small {
+    background: transparent;
+    color: #676767;
+    display: inline;
+    font-size: 60%;
+    font-style: normal;
+    margin: 0;
+    padding-left: 5px;
+    text-transform: capitalize;
+  }
+}
+
+select.date {
+  display: inline-block;
+  margin-right: 5px;
+  width: 32%;
+}
+
+body.registrations,
+body.users {
+  .field_with_hint {
+    span.hint {
+      top: auto;
+    }
+  }
+
+  //.field_with_errors {
+  //  span.error {
+  //    top: -2px;
+  //  }
+  //}
+}

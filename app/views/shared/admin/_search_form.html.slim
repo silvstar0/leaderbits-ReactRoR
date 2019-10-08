@@ -1,0 +1,6 @@
+= form_tag [:admin, resource], method: 'get' do
+  .row.collapse
+    .small-9.columns
+      = text_field_tag :query, params[:query]
+    .small-3.columns
+      = submit_tag 'Search', name: nil, class: 'button postfix'

@@ -1,0 +1,6 @@
+p Hi #{@recipient_user.first_name},
+
+p we have a new entry from #{@entry.user.name} on "#{@entry.leaderbit.name}" for you to review.
+
+= link_to 'Click here', entry_group_url(@entry.entry_group.to_param, user_token: @recipient_user.issue_new_authentication_token_and_return, user_email: @recipient_user.email)
+| &nbsp;to see the entry.

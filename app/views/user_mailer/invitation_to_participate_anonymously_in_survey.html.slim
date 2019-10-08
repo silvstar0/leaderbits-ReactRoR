@@ -1,0 +1,13 @@
+p Hi #{NameOfPerson::PersonName.full(@anonymous_survey_participant.name).first},
+
+p #{@user.name} has just joined LeaderBits technology leadership program and we need your help to assist #{@user.first_name} in becoming a better leader by completing #{link_to "this anonymous survey", participate_anonymously_survey_url(@survey, anonymous_survey_participant_id: @anonymous_survey_participant.uuid) } of their strengths as a leader.
+
+p Results are anonymous and will be used by the algorithm to personalize #{@user.first_name.possessive} leadership training.
+br
+p
+  | Thank you,
+  br
+  br
+  | Joel Beasley
+  br
+  | CTO LeaderBits.io

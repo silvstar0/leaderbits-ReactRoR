@@ -1,0 +1,4 @@
+$('#entry_<%= @entry.id %>').slideUp(100, function() {
+  $(this).remove();
+  domReadyOrPjaxComplete();
+});

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+bundle exec annotate --show-foreign-keys --complete-foreign-keys --simple-indexes --trace --hide-limit-column-types integer,bigint,boolean,text,string --with-comment
+# separate because both are mutually exclusive for some reason
+bundle exec annotate --routes

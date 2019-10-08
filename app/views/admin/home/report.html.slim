@@ -1,0 +1,70 @@
+- content_for(:page_title, 'Admin Report')
+
+.row
+  .large-12.columns
+    p
+      label Please note: watch time tracking has been enabled only recently so for old users/challenges data is not accurate.
+    table.stack.unstriped.tablesorter
+      thead
+        tr
+          th style="text-align: center; cursor: pointer" User ⇕
+          th style="text-align: center; cursor: pointer"
+            | Challenges completed for
+            br
+            | default schedule ⇕
+          th style="text-align: center; cursor: pointer"
+            | Challenges sent
+            br
+            | for default schedule ⇕
+          th style="text-align: center; cursor: pointer"
+            | Challenges unsent
+            br
+            | for default schedule ⇕
+          th style="text-align: center; cursor: pointer"
+            | Challenges sent
+            br
+            | but not completed ⇕
+          th style="text-align: center; cursor: pointer"
+            | Total time watched ⇕
+          th style="text-align: center; cursor: pointer"
+            | Challenges watched
+            br
+            | but not completed ⇕
+      tbody
+        - @users.each do |user|
+          - cache user do
+            tr id=dom_id(user)
+              td style="text-align: center"
+                = link_to user.name, [:admin, user]
+                br
+                small= user.organization.name
+              td style="text-align: center; cursor: help" title="Challenges completed for default schedule"
+                = user.challenges_completed_for_default_schedule
+              td style="text-align: center; cursor: help" title="Challenges sent for default schedule"
+                = user.challenges_sent_for_default_schedule
+              td style="text-align: center; cursor: help" title="Challenges unsent for default schedule"
+                = user.challenges_unsent_for_default_schedule
+              td style="text-align: center; cursor: help" title="Challenges sent but not completed"
+                = user.challenges_sent_but_not_completed
+              td style="text-align: center; cursor: help" title="Total time watched"
+                = user.total_time_watched
+              td style="text-align: center; cursor: help" title="Challenges watched but not completed"
+                = user.challenges_watched_but_not_completed
+
+- content_for :javascript do
+  |
+    if(window.location.hash) {
+      var el = document.getElementById(window.location.hash.replace('#', ''));
+      el.style.background = '#e1faea';
+
+      $([document.documentElement, document.body]).animate({
+         scrollTop: $(window.location.hash).offset().top - 180
+      }, 600);
+    }
+    $(document).ready(function() {
+      //#563 Uncaught TypeError: $(...).tablesorter is not a function
+      //Stackoverflow says it is caused by jquery which is loaded multiple times.
+      //If this page/report stays after the redesign, we should find out the root cause of this.
+      //It is not user-facing issue
+      $(".tablesorter").tablesorter();
+    });

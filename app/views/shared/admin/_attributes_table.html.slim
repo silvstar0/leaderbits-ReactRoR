@@ -1,0 +1,27 @@
+table.stack width="100%"
+  tbody
+    - attributes.in_groups_of(4).each do |attrs|
+      tr
+        td
+          strong
+            = humanized_attribute_label attrs[0]
+          br
+          = raw attribute_value(model, attrs[0])
+        td
+          - if attrs[1].present?
+            strong
+              = humanized_attribute_label attrs[1]
+            br
+            = raw attribute_value(model, attrs[1]) || ' &nbsp;'
+        td
+          - if attrs[2].present?
+            strong
+              = humanized_attribute_label attrs[2]
+            br
+            = raw attribute_value(model, attrs[2]) || ' &nbsp;'
+        td
+          - if attrs[3].present?
+            strong
+              = humanized_attribute_label attrs[3]
+            br
+            = raw attribute_value(model, attrs[3]) || ' &nbsp;'

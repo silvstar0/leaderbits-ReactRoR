@@ -1,0 +1,32 @@
+.row
+  .small-12.medium-8.medium-centered.columns.text-center
+    h1 Growth Equals Happiness
+    p Complete leadership challenges, gain experience, and develop professionally.
+    hr
+    br
+.row
+  .small-10.small-centered.medium-6.medium-centered.columns.sign-up-container
+    = simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+      = f.error_notification
+      .form-inputs
+        .row
+          .small-12.columns
+            = f.fields_for :organization do |organization|
+              = organization.input :name, autofocus: true, label: 'Company', input_html: { value: resource.organization&.name, placeholder: "Ex: Microsoft" }
+        .row
+          .small-12.columns
+            = f.input :name, required: true, input_html: { style: 'width: 100%' }
+        .row
+          .small-12.columns
+            = f.input :email, required: true, autocomplete: "email"
+
+          .small-12.columns
+            = f.input :password, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length), autocomplete: "new-password"
+
+        = f.input :time_zone, priority: /US/, as: :hidden, input_html: {value: 'Pacific Time (US & Canada)'}
+
+
+      .form-actions
+        = f.button :submit, "I'm ready, let's do this!", class: 'expanded'
+    hr
+    = render "devise/shared/links"

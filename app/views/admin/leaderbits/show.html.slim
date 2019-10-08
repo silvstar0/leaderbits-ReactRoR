@@ -1,0 +1,40 @@
+- content_for(:page_title, "Admin : LeaderBits : #{@leaderbit.name}")
+
+.row.full-width
+  .medium-6.columns
+    h1= "#{@leaderbit.name} id: #{@leaderbit.id}"
+  - if policy([:admin, @leaderbit]).edit?
+    .medium-6.columns.text-right
+      = link_to [:edit, :admin, @leaderbit], class: 'button' do
+        = fa_icon 'edit'
+        | &nbsp; Edit
+
+.row.full-width
+  .large-12.columns
+    = render 'shared/admin/attributes_table', model: AdminLeaderbitDecorator.new(@leaderbit),
+            attributes: [:name,
+                    :description,
+                    :url,
+                    :actual_image,
+                    :selected_tag_labels,
+                    :entry_prefilled_text,
+                    :body,
+                    :active]
+
+.row.full-width
+  .large-12.columns
+    fieldset.fieldset
+      legend Assigned To Schedules
+      ul
+      - LeaderbitSchedule.where(leaderbit_id: @leaderbit.id).includes(:schedule).collect(&:schedule).uniq.each do |schedule|
+        li
+          = link_to schedule.name, [:admin, schedule]
+
+.row.full-width
+  .small-12.medium-8.columns.medium-centered
+    .responsive-embed
+      iframe src="#{@leaderbit.url}" width="100%" height="350" frameborder="0" allowfullscreen="allowfullscreen"
+  .small-12.medium-8.columns.medium-centered.content-below-iframe-video
+    h3 #{@leaderbit.name}
+
+    = react_component("ReadMore", {desc: @leaderbit.desc, body: @leaderbit.body})

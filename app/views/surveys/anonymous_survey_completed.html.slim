@@ -1,0 +1,15 @@
+- content_for(:page_title, "#{@anonymous_survey_participant.added_by_user.name&.possessive} leadership program")
+
+.row.welcome_custom
+  .small-12.medium-8.medium-centered.columns.text-center
+    h4 Thank you!
+
+    - # TODO do we really need to be *that* defensive here? Leaders must have names
+    p We’ve started to customize #{@anonymous_survey_participant.added_by_user.name.possessive} leadership program based on your input.
+
+    br
+    p
+      | Joel Beasley
+      br
+      | CTO LeaderBits.io
+

@@ -1,0 +1,120 @@
+- content_for(:page_title, "Admin : Tags : #{@label}")
+
+.row.full-width
+  .medium-6.columns
+    h1= @label
+
+  .medium-6.columns.text-right
+    - if Admin::TagPolicy.new(current_user, @label).edit?
+      = link_to edit_admin_tag_path(@label), class: 'button success' do
+        = fa_icon 'edit'
+        | &nbsp; Edit
+
+- if @leaderbits.present?
+  .row.full-width style="margin-top: 20px"
+    .large-9.small-12.columns
+      table.stack.index width="100%"
+        thead
+          tr
+            th
+            th= order_by_link 'Name'
+            th Schedules
+            th Tags
+            th Entries
+            th
+
+        tbody#leaderbits
+          - @leaderbits.each do |leaderbit|
+            = content_tag_for :tr, leaderbit, id: "leaderbit_#{leaderbit.id}", style: 'border: 4px solid #000' do
+              td
+                .show-for-small-only
+                  span style="display: inline-block; width: 100%; padding: 1px"
+                    = video_cover leaderbit
+                .hide-for-small-only
+                  span style="display: inline-block; width: 100px; padding: 1px"
+                    = video_cover leaderbit
+              td
+                .show-for-small-only
+                  br
+                = leaderbit.name
+              td
+                ul style="margin-top: 1rem"
+                  - leaderbit.schedules.each do |schedule|
+                    li = link_to schedule.name, admin_schedule_path(schedule.to_param)
+              td
+                - tags = leaderbit.tags.pluck(:label)
+                - if tags.present?
+                  ul style="margin-top: 1rem"
+                    - tags.each do |label|
+                      li = link_to label, admin_tag_path(label)
+
+              td
+                - count = EntryGroup.where(leaderbit_id: leaderbit.id).count
+                .show-for-small-only
+                  = link_to pluralize(count, 'entry'), entry_groups_path(leaderbit_id: leaderbit.id)
+                .hide-for-small-only
+                  .text-center
+                    = count
+                    - if count.positive?
+                      br
+                      = link_to entry_groups_path(leaderbit_id: leaderbit.id) do
+                        | show
+
+              td.text-center.action
+                ul.button-group.actions.even
+                  li
+                    = link_to [:admin, leaderbit], title: 'View', class: 'button info' do
+                      = fa_icon 'eye'
+                      | &nbsp; View
+                  - if policy([:admin, leaderbit]).edit?
+                    li
+                      = link_to [:edit, :admin, leaderbit], title: 'Edit', class: 'button secondary' do
+                        = fa_icon 'edit'
+                        | &nbsp; Edit
+
+
+- if @questions.present?
+  - @questions.group_by { |q| q.survey_id }.each do |survey_id, questions|
+    - survey = Survey.find(survey_id)
+    .row.full-width style="margin-top: 20px"
+      .large-9.small-12.columns
+
+        h3 Survey: #{survey.title}
+
+        table.stack.index width="100%"
+          thead
+            tr
+              th= order_by_link 'Title'
+              th= order_by_link 'Tags'
+              th= order_by_link 'Type'
+              th
+          tbody
+          tbody#survey_questions
+            - questions.each do |question|
+              = content_tag_for :tr, question, id: "question_#{question.id}", style: 'border: 4px solid #000' do
+                td
+                  a title=question.id
+                    = link_to question.title, [:admin, survey, question]
+                td
+                  - tags = question.tags.pluck(:label)
+                  - if tags.present?
+                    ul style="margin: 0"
+                      - tags.each do |label|
+                        li = link_to label, admin_tag_path(label)
+                td
+                  span.show-for-small-only
+                    | Type: &nbsp;
+                  = question.type
+
+                td.action
+                  ul.button-group.actions.even
+                    li
+                      = link_to [:admin, survey, question], title: 'View', class: 'button info', style: 'text-align: left' do
+                        = fa_icon 'eye'
+                        | &nbsp; View
+                    - if policy([:admin, question]).edit?
+                      li
+                        = link_to [:edit, :admin, survey, question], title: 'Edit', class: 'button secondary', style: 'text-align: left' do
+                          = fa_icon 'edit'
+                          | &nbsp; Edit
+      .large-3.columns

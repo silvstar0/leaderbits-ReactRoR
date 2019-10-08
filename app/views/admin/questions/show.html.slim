@@ -1,0 +1,22 @@
+- content_for(:page_title, "Admin : Surveys : #{@survey.title} : Questions")
+
+.row.full-width
+  .medium-6.columns
+  - if policy([:admin, @question]).edit?
+    .medium-6.columns.text-right
+      = link_to [:edit, :admin, @survey, @question], class: 'button success' do
+        = fa_icon 'edit'
+        | &nbsp; Edit
+
+.row.full-width style="margin-top: 20px"
+  .large-9.columns
+
+    label Preview:
+    fieldset.fieldset
+      = render "shared/question_#{@question.type.underscore}", question: @question
+
+- content_for :javascript do
+  |
+    $(function(){
+      $(document).foundation();
+    });

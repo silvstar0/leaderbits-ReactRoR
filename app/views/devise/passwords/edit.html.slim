@@ -1,0 +1,21 @@
+- custom = params[Rails.configuration.custom_title_on_reset_password_page].present?
+.row
+  .small-10.small-centered.medium-6.medium-centered.columns.sign-up-container
+    - if custom
+      h3
+        | Set your password:
+    - else
+      h3
+        | Change your password
+    hr
+    = simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f|
+      / = f.error_notification
+      - #NOTE: wrapper styling override is important in case when token is invalid
+      = f.input :reset_password_token, as: :hidden, wrapper_html: { style: 'display: none' }
+      = f.full_error :reset_password_token
+      .form-inputs
+        = f.input :password, label: "New password", required: true, autofocus: true, autocomplete: "new-password"
+        = f.input :password_confirmation, label: "Confirm your new password", required: true, autocomplete: "new-password"
+      .form-actions
+        = f.button :submit, (custom ? "Set my password" : "Change my password")
+    = render "devise/shared/links"

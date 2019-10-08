@@ -1,0 +1,43 @@
+-  #onsubmit: "event.preventDefault(); return false"
+= simple_form_for [:admin, leaderbit], html: { multipart: true } do |f|
+  = f.input :name, required: true, autofocus: true
+  = f.input :url, required: true, label: 'URL'
+  div style="height: 10px"
+  = f.input :user_action_title_suffix, label: 'User Action Title Suffix(for Value Reports)', hint: 'For example: "just learned how they could become more valuable to their team" or "just connected the value of their work back to the customer". <br>Please Note: this title is prepended with user\'s name'.html_safe
+  = f.input :desc, input_html: { cols: 10, rows: 3}, required: true, label: 'Description'
+  = f.input :body, input_html: { cols: 10, rows: 10}, required: true, as: :trix_editor
+  = f.input :entry_prefilled_text, input_html: { cols: 10, rows: 4}, hint: 'If empty placeholder textarea message for user is: *Make an entry into the ReflectDB...*'
+
+  = video_cover f.object
+  = f.input :video_cover, as: :file, hint: 'Choose file to upload new cover image'
+
+  div.input.tags style="margin-bottom: 20px"
+    label.text Tags
+    div
+      = react_component('TagSelector', resourceName: 'leaderbit', allLabels: all_global_tag_labels, selectedLabels: leaderbit.selected_tag_labels)
+
+  - if current_user.can_make_leaderbit_active?
+    = f.input :active
+
+  fieldset.fieldset
+    legend Assigned To Schedules
+    p
+      |Please note: after you assign LeaderBit to new schedule it will be added to the end of list by default.
+
+    - Schedule.order(id: :asc).in_groups_of(4).each do |schedule_array|
+      .row
+        - schedule_array.each do |schedule|
+          .card.columns style="width: 300px; border: 0"
+            .input
+              - if schedule.blank?
+                label &nbsp;
+              - else
+                - schedule_contains_leaderbit_ids = schedule.leaderbit_schedules.pluck(:leaderbit_id)
+                - if schedule_contains_leaderbit_ids.include?(leaderbit.id)
+                  input checked="" name="leaderbit[schedule][#{schedule.id}]" id="schedule_#{schedule.id}" type="checkbox"
+                - else
+                  input name="leaderbit[schedule][#{schedule.id}]" id="schedule_#{schedule.id}" type="checkbox"
+                label for="schedule_#{schedule.id}" = schedule.name
+
+  div
+    = f.submit class: "button"

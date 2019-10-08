@@ -1,0 +1,19 @@
+p Hi #{@organizational_mentorship.mentee_user.first_name},
+
+p
+  | #{@organizational_mentorship.mentor_user.name} sees significant potential in you and has selected you as a mentee for the LeaderBits technology leadership. #{@organizational_mentorship.mentor_user.first_name} believes in this program you’ll improve and grow.
+
+p If you’d like to join #{link_to('accept the invitation here', @accept_mentee_invitation_url || raise('missing @accept_mentee_invitation_url'))}.
+
+p Details of the program are simple. Each week you’ll get a 3 minute video leadership challenge where you will take action to improve as a leader. Then your mentor will see your response to the challenge and be able to reply to you.
+
+p Together myself and #{@organizational_mentorship.mentor_user.first_name} will upskill you as a leader and prepare for the next stage of your career. It’s fun and I look forward to being apart of your journey into leadership.
+
+br
+p
+  | The future is bright,
+  br
+  br
+  | Joel Beasley
+  br
+  | CTO LeaderBits.io

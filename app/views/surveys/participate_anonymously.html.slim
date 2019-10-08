@@ -1,0 +1,24 @@
+- content_for(:page_title, @survey.title)
+
+.row.welcome_custom
+  .small-12.medium-8.medium-centered.columns.text-center.sign-up-container
+    - #TODO abstract & reuse
+    h4= raw @survey.title.gsub(' view', ' view<br>').gsub('%{name}', @anonymous_survey_participant.added_by_user.name)
+    - if user_signed_in?
+      - if current_user.system_admin? || current_user.leaderbits_employee_with_access_to_any_organization?
+        font style="text-align: center; color: red"
+          = @anonymous_survey_participant.role
+          small
+            | (* visible only for admins)
+
+    - if @already_voted_at
+      h5 style="margin-top: 20px"
+        | We're sorry but you had already voted in this survey&nbsp;
+        time.timeago datetime=@already_voted_at.getutc.iso8601
+        | .
+    - else
+      hr
+      = simple_form_for 'answers', url: survey_answers_path(@survey, id: @anonymous_survey_participant.uuid), method: 'post', html: { novalidate: false } do |f|
+        - @survey.questions.order(created_at: :asc).each do |question|
+          = render "shared/question_#{question.type.underscore}", question: question
+        = f.submit "Submit", class: "button"

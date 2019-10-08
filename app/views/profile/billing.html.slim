@@ -1,0 +1,122 @@
+- content_for(:page_title, 'Billing')
+// There are no cards in your account at this time.
+.row
+  .small-12.medium-7.columns class=(@charges.present? ? '' : 'medium-centered')
+    - if @masked_card_number.present?
+      h3 Billing
+    - else
+      h3.text-center style="margin-top: 20px" You have no billing info on file
+    hr style="margin-top: 0"
+
+    .row
+      .small-12.columns
+        - if @masked_card_number.present?
+          .row.columns
+            / .small-12.columns
+            /   h4 Saved payment method:
+
+            .medium-6.small-12.columns style="border: 1px solid lightgrey; border-radius: 2px; margin-bottom: 20px"
+              .row style="padding: 5px"
+                .medium-2.small-6
+                  ul.PricingDetailsRow-cardBrands
+                    - brand_name = @default_card.brand
+                    - brand_name[0] = brand_name[0].downcase
+                    li class=("cardBrand-" + brand_name)
+                .medium-10.small-6
+                  div.text-right style="font-weight: 400"
+                    = @masked_card_number
+
+                  div.text-right
+                    = @default_card.brand.capitalize
+          .row
+            .medium-6.small-12.columns
+              .text-center
+                form action="" method="POST"
+                  script.stripe-button {
+                    src="https://checkout.stripe.com/checkout.js"
+                    data-key=ENV.fetch('STRIPE_PUBLISHABLE_KEY')
+                    data-image=image_path('stripe-logo.png')
+                    data-name='LeaderBits'
+                    data-panel-label=@button_label
+                    data-label=@button_label
+                    data-allow-remember-me=true
+                    data-locale="auto"}
+                - #TODO include fixed email as well? data-email=current_user.email
+                - # or it could be different instead?
+
+              .show-for-small-only
+                div style="height: 25px"
+
+        - else
+          .text-center
+            form action="" method="POST"
+              script.stripe-button {
+                src="https://checkout.stripe.com/checkout.js"
+                data-key=ENV.fetch('STRIPE_PUBLISHABLE_KEY')
+                data-image=image_path('stripe-logo.png')
+                data-name='LeaderBits'
+                data-panel-label=@button_label
+                data-label=@button_label
+                data-allow-remember-me=true
+                data-locale="auto"}
+            - #TODO include fixed email as well? data-email=current_user.email
+            - # or it could be different instead?
+
+            .show-for-small-only
+              div style="height: 25px"
+          .text-center
+            ul.PricingDetailsRow-cardBrands
+              li.cardBrand-visa Visa
+              li.cardBrand-masterCard Master Card
+              li.cardBrand-americanExpress American Express
+              li.cardBrand-discover Discover
+              li.cardBrand-jcb JCB
+              li.cardBrand-dinersClub Diners Club
+              li.cardBrand-chinaUnion China UnionPay
+              li.apmBrand-applePay Apple Pay
+              li.apmBrand-googlePay Google Pay
+
+  - if @charges.present?
+    .small-12.medium-5.columns
+      h3 Charges
+      hr style="margin-top: 0"
+
+      - @charges.each do |charge|
+        .row.columns
+          .small-12.columns
+            .row style="padding: 5px; border: 1px solid lightgrey; border-radius: 2px; margin-bottom: 20px"
+              .medium-2.small-3.align-self-bottom style="text-align: left; font-weight: 500; padding-left: 10px"
+                = Time.at(charge.created).stamp("Dec 31")
+              .medium-7.small-6.align-self-bottom
+                / NOTE: receipt_number is not always present for each charge
+                /= charge.receipt_number
+                - money = Money.new(charge.amount, charge.currency)
+
+                / div
+                /   /.badge style="margin-right: 5px" = charge.status
+                /   / - if charge.paid
+                /   /   .badge style="margin-right: 5px" paid
+
+                p style="display: none" = charge_debug_info(charge)
+
+                //p Status: #{charge.status}
+                span
+                  .show-for-small-only
+                    = link_to 'Receipt', charge.receipt_url
+
+                    - if charge.refunded
+                      | &nbsp;
+                      span.badge style="margin-right: 5px" refunded
+
+                  .hide-for-small-only
+                    = link_to 'Download Receipt', charge.receipt_url
+                    - if charge.refunded
+                      | &nbsp;
+                      span.badge style="margin-right: 5px" refunded
+
+              //time.timeago datetime=Time.at(charge.created).getutc.iso8601
+              .small-3.align-self-bottom style="text-align: right; padding-right: 10px; font-weight: 500"
+                span.amount
+                  = humanized_money_with_symbol money
+                  // = number_to_currency (charge.amount / 100.0), precision: 1
+

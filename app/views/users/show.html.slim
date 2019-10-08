@@ -1,0 +1,76 @@
+- content_for(:page_title, @user.name)
+
+.row
+  .small-12.medium-10.medium-centered.columns.text-center
+    h1 = @user.name
+
+    - if @user == current_user
+      p Track your growth, level up your LeaderBits with experience.
+    hr
+    .row
+      .medium-8.small-12.columns
+        - if @entry_groups.blank?
+          p.text-center style="margin-top: 7px; background-color: #F5F5F5" There are no ReflectDB entries yet.
+        - else
+          - @entry_groups.each do |entry_group|
+            - #TODO-low cache by current_user, entry_group, leaderbit and reduce lots of queries?
+            - #check whether likes properly invalidates cache
+            - #also time_ago_in_words - replace with js - preparation for caching
+            = render "shared/entry_group_show", entry_group: entry_group
+            br
+      .medium-4.small-12.columns
+        - if @user.schedule.present?
+          - #TODO: that's not very accurate - user might be on personal leaderbits scheduled instead. Low priority? This section might be completely removed soon
+          - leaderbits = @user.upcoming_active_leaderbits_from_schedule
+          - if leaderbits.present?
+            h4 Upcoming Challenges
+            ul style="text-align: left; margin-bottom: 0"
+              - leaderbits.each do |leaderbit|
+                li style="font-size: 14px"= leaderbit.clean_name
+
+          - if policy(@user).manage_preemptive_leaderbits_for?
+            div.text-left
+              a style="text-decoration: underline; margin-left: 1.25rem" onClick="document.getElementById('add-to-instant-queue-form').style.display = 'block' ; this.style.display = 'none'" Add Challenge to Instant Queue
+            br
+
+            div
+              = simple_form_for 'leaderbit', url: preemptive_leaderbits_path(user_id: @user.uuid), method: 'post', html: {id: 'add-to-instant-queue-form', style: 'display: none'} do |f|
+                = f.input :id, as: :select, collection: user_accessible_leaderbits_for_preemptive_queue(@user).pluck(:name, :id), label: false, input_html: { style: 'margin: 0; margin-bottom: 2px', id: Rails.configuration.add_to_next_up_select_dom_id }
+                = f.button :submit, class: 'hollow small expanded', value: 'Add to Instant Queue', data: { disable_with: 'Adding to Instant Queue...' }
+
+        hr
+        /
+        h4 Momentum
+        .chartist-current-momentum-container.chartist-chart-with-text
+          font
+            | #{number_to_percentage @user.momentum, precision: 0}
+        - add_javascript_content_for_current_momentum user: @user
+        p
+          small Momentum is the measure of recent engagement.
+
+        - if @user.momentum_historic_values.count >= 2
+          - # otherwise "Current Momentum" is enough
+          br
+          h4 Engagement
+          .chartist-momentum-over-time-container
+          - add_javascript_content_for_line_chart placeholder_selector: '.chartist-momentum-over-time-container', data: momentum_over_time(@user)
+          p
+            small Momentum changing over time.
+
+        br
+        h4 Points
+        - if @user.points.collect { |p| p.created_at.to_date }.uniq.count >= 2
+          .chartist-points-over-time-container
+          - add_javascript_content_for_line_chart placeholder_selector: '.chartist-points-over-time-container', data: points_over_time(@user)
+        - else
+          .chartist-points-over-time-container.chartist-chart-with-text
+            - value = @user.points.sum(:value)
+            font = value
+          - add_javascript_content_for_raw_metric placeholder_selector: '.chartist-points-over-time-container', value: value
+
+        p
+          small Points are a measure of historical engagement.
+
+        br
+        p
+          | As you complete challenges, gain experience and make entries into the ReflectDB, your momentum and points will rise.

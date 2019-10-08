@@ -1,0 +1,24 @@
+table width="100%"
+  thead
+    tr
+      - attributes.each do |attribute|
+        th= attribute.to_s.humanize.titleize
+      th
+
+  tbody
+    - collection.each do |model|
+      tr class=admin_user_item_class(model)
+        - attributes.each do |attribute|
+          td= attribute_value(model, attribute)
+        td
+          ul.table-options.button-group.actions.even
+            li
+              = link_to [:admin, model], class: 'button info', style: 'text-align: left' do
+                = fa_icon 'eye'
+                | &nbsp; View
+
+              - if policy([:admin, model]).edit?
+                li
+                  = link_to [:edit, :admin, model], class: 'button secondary', style: 'text-align: left' do
+                    = fa_icon 'edit'
+                    | &nbsp; Edit

@@ -1,0 +1,61 @@
+.how-to-get-points {
+  margin-top: 100px;
+
+  hr {
+    margin-top: 0;
+  }
+
+  svg {
+    height: 15px;
+    width: 12px;
+  }
+
+  span {
+    font-size: 24px;
+    margin-left: 11px;
+  }
+
+  p {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .how-to-get-points {
+    margin-top: 37px;
+
+    span {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+}
+
+#flash-achievement-container {
+  h1 {
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+}
+
+// Small only
+@media screen and (max-width: 39.9375em) {
+  #flash-achievement-container {
+    h1 {
+      font-size: 32px;
+    }
+  }
+}
+
+// Medium and up
+@media screen and (min-width: 40em) {
+  #flash-achievement-container {
+    h1 {
+      font-size: 48px;
+    }
+  }
+}
+

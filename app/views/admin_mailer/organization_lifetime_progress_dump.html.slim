@@ -1,0 +1,24 @@
+h3= @organization.name
+
+p The following actions were taken recently:
+
+- @leaderbit_logs.group_by { |ll| ll.updated_at.beginning_of_month }.sort_by { |date, _arr| date }.reverse.each do |date, leaderbit_logs|
+  font style="font-size: 20px;" = date.stamp("October 2018")
+  / = date.to_s
+  hr style="margin: 0 0 10px 0"
+
+  - leaderbit_logs.group_by { |ll| ll.leaderbit }.sort_by { |leaderbit, _arr| leaderbit }.reverse.each do |leaderbit, leaderbit_logs|
+    table style="border: 0; width: 100%; margin-bottom: 10px"
+      tr style="margin-bottom: 10px"
+        td style="vertical-align: top"
+          div style="width: 123px"
+            = video_cover leaderbit
+        td style="vertical-align: top; margin: 0; padding: 0 0 0 10px"
+          font style="font-size: 18px; margin-bottom: 3px; display: block" #{leaderbit.name}
+
+          div style="margin-bottom: 10px"
+            = raw leaderbit_logs.collect { |ll| ll.user.name }.collect { |name| "<strong>#{name}</strong>".html_safe }.to_sentence(last_word_connector: ', and ')
+            |&nbsp;
+            = action_suffix = leaderbit_logs.first.leaderbit.user_action_title_suffix
+
+= leaderbot_footer_message

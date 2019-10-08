@@ -1,0 +1,14 @@
+- raise 'missing f local var' unless defined?(f)
+- raise 'missing StrengthLevelsFormObject::Levels symbol name' unless defined?(symbol_name)
+
+- input_id = "slider#{symbol_name}"
+
+h2 style="margin-bottom: 0px; line-height: 0.8"
+  = t(".#{symbol_name}")
+label= t(".#{symbol_name}_label")
+
+.grid-x.grid-margin-x
+  .slider data-initial-start="#{f.object.send symbol_name}" data-slider=""
+    span.slider-handle aria-controls="#{input_id}" data-slider-handle="" role="slider" tabindex="1"
+    span.slider-fill data-slider-fill=""
+  = f.input symbol_name, input_html: {type: 'number', id: input_id, class: 'is-hidden'}, label: false

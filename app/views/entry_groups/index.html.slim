@@ -1,0 +1,60 @@
+- #content_for(:page_title, action_name == 'hide_read' ? 'Unread Entries' : 'All Entries')
+- content_for(:page_title, 'Entries')
+
+.row
+  small-12.medium-8.medium-centered.columns
+    - #TODO-low add spec - this functionality is only for admins and employees
+    - if current_user.system_admin? || current_user.leaderbits_employee_with_access_to_any_organization?
+      .row
+        .small-4.columns
+          = simple_form_for 'p', url: entry_groups_path, method: 'get' do |f|
+            - additional_attributes = same_path_attributes_but_without_parameter('mentor_user_uuid')
+            - additional_attributes.each do |k, v|
+              = f.input k, :as => :hidden, :input_html => { :name => k, :value => v }
+
+            label
+              | Mentor:
+            = f.input :mentor_user_uuid, as: :select, collection: leaderbit_employee_mentors_collection, selected: default_mentor_user_selected, label: false, include_blank: true, input_html: { style: 'margin: 0', name: 'mentor_user_uuid', onchange: "this.closest('form').submit()" }
+          br
+        .small-4.columns
+          = simple_form_for 'p', url: entry_groups_path, method: 'get' do |f|
+            - additional_attributes = same_path_attributes_but_without_parameter('user_uuid')
+            - additional_attributes.each do |k, v|
+              = f.input k, :as => :hidden, :input_html => { :name => k, :value => v }
+
+            label
+              | Author:
+            = f.input :user_uuid, as: :select, collection: specific_users_collection_on_entries_show, selected: default_specific_user_selected, label: false, include_blank: true, input_html: { style: 'margin: 0', name: 'user_uuid', onchange: "this.closest('form').submit()" }
+          br
+        .small-4.columns
+          = simple_form_for 'p', url: entry_groups_path, method: 'get' do |f|
+            - additional_attributes = same_path_attributes_but_without_parameter('leaderbit_id')
+            - additional_attributes.each do |k, v|
+              = f.input k, :as => :hidden, :input_html => { :value => v }
+
+            label
+              | LeaderBit:
+            = f.input :leaderbit_id, as: :select, collection: @entry_groups.collect(&:leaderbit).uniq.sort_by(&:name).collect { |l| [l.name.gsub('Challenge: ', ''), l.id] }, selected: default_specific_leaderbit_selected, label: false, include_blank: true, input_html: { style: 'margin: 0', name: 'leaderbit_id', onchange: "this.closest('form').submit()" }
+            br
+
+  .small-12.medium-8.medium-centered.columns
+    .card2 style="text-align: right; vertical-align: middle"
+      .switch.small style="display: inline-block; margin-right: 10px"
+        input checked=(params[:hide_read] == 'true') onchange="window.location = '#{ same_path_but_without_parameter('hide_read') } + &hide_read=' + this.checked" class="switch-input" id="yes-no" type="checkbox" name="exampleSwitch"
+        label class="switch-paddle" for="yes-no"
+          /span class="show-for-sr">Do you like me?</span
+          span class="switch-active" aria-hidden="true" Yes
+          span class="switch-inactive" aria-hidden="true" No
+      font style="vertical-align: super" Hide read?
+
+    - @entry_groups.each do |entry_group|
+      = render 'shared/entry_group_show', entry_group: entry_group
+      / hr style="margin-top: 0"
+        br
+      / .show-for-small-only
+      /   div style="height: 30px"
+
+.row
+  .small-12.medium-8.medium-centered.columns.text-center
+    = will_paginate @entry_groups
+    = "Total Entries: #{@entry_groups.total_entries}"

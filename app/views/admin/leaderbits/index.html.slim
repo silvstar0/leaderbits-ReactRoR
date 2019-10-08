@@ -1,0 +1,79 @@
+- content_for(:page_title, 'Admin : LeaderBits')
+
+.row.full-width
+  .medium-6.columns
+    h1 LeaderBits
+  - if policy([:admin, Leaderbit]).new?
+    .medium-6.columns.text-right
+      = link_to [:new, :admin, :leaderbit], class: 'button success' do
+        = fa_icon 'plus-square'
+        | &nbsp; New LeaderBit
+
+.row.full-width
+  .small-12.columns
+    = render 'shared/admin/search_form', resource: :leaderbits
+
+.row.full-width style="margin-top: 20px"
+  .small-12-12.columns
+    table.stack.index width="100%"
+      thead
+        tr
+          th
+          th= order_by_link 'Name'
+          th Schedules
+          th Tags
+          th Entries
+          th
+
+      tbody#leaderbits
+        - @leaderbits.each do |leaderbit|
+          = content_tag_for :tr, leaderbit, class: admin_leaderbit_item_class(leaderbit), id: "leaderbit_#{leaderbit.id}", style: 'border: 4px solid #000' do
+            td.text-center
+              .show-for-small-only
+                span style="display: inline-block; width: 100%; padding: 1px"
+                  = video_cover leaderbit
+              .hide-for-small-only
+                span style="display: inline-block; width: 100px; padding: 1px"
+                  = video_cover leaderbit
+              div
+                small
+                  | added&nbsp;
+                  time.timeago datetime=leaderbit.created_at.getutc.iso8601
+            td
+              .show-for-small-only
+                br
+              = leaderbit.name.gsub('Challenge: ', '')
+            td
+              ul style="margin-top: 1rem"
+                - leaderbit.schedules.each do |schedule|
+                  li = link_to schedule.name, admin_schedule_path(schedule.to_param)
+            td
+              - tags = leaderbit.tags.pluck(:label)
+              - if tags.present?
+                ul style="margin-top: 1rem"
+                  - tags.each do |label|
+                    li = label
+
+            td
+              - count = EntryGroup.where(leaderbit_id: leaderbit.id).count
+              .show-for-small-only
+                = link_to pluralize(count, 'entry'), entry_groups_path(leaderbit_id: leaderbit.id)
+              .hide-for-small-only
+                .text-center
+                  = count
+                  - if count.positive?
+                    br
+                    = link_to entry_groups_path(leaderbit_id: leaderbit.id) do
+                      | show
+
+            td.text-center.action
+              ul.button-group.actions.even
+                li
+                  = link_to [:admin, leaderbit], title: 'View', class: 'button info' do
+                    = fa_icon 'eye'
+                    | &nbsp; View
+                - if policy([:admin, leaderbit]).edit?
+                  li
+                    = link_to [:edit, :admin, leaderbit], title: 'Edit', class: 'button secondary' do
+                      = fa_icon 'edit'
+                      | &nbsp; Edit

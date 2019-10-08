@@ -1,0 +1,12 @@
+doctype html
+html lang="en"
+  head
+    = render 'shared/common_head'
+
+  body class=extended_body_class
+    .row.full
+      .small-12.medium-12.columns.top-header-section
+        = render 'shared/application_nav'
+
+    == yield
+    = javascript_tag yield(:javascript)

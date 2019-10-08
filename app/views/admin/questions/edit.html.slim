@@ -1,0 +1,9 @@
+- content_for(:page_title, "Admin : Edit Question #{@survey.title}")
+
+.row.full-width
+  .medium-6.columns
+    h1= "Edit #{@survey.title}"
+
+.row.full-width
+  .small-12.columns
+    = render 'form', question: @question

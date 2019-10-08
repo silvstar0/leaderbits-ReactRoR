@@ -1,0 +1,9 @@
+// TODO replace with dom_id?
+
+<% if request.referer.present? && request.referer.include?('hide_read=true') %>
+  $('#<%= dom_id @entry_group %>').slideUp(100, function() {
+    $(this).remove();
+  });
+<% else %>
+  $('#<%= dom_id @entry_group %> .option').hide();
+<% end %>

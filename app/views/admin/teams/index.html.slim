@@ -1,0 +1,34 @@
+- content_for(:page_title, 'Admin : Teams')
+.row.full-width
+  .medium-6.columns
+    - if @organization.present?
+      h1 #{@organization.name} Teams
+    - else
+      h1 Teams
+
+.row.full-width
+  .large-12.columns
+    table.index width="100%"
+      thead
+        tr
+          th Name
+          th Account
+          th Users
+          th Created
+          th
+
+      tbody
+        - @teams.each do |team|
+          tr
+            td= team.name
+            td= link_to team.organization.name, [:admin, team.organization]
+            td= link_to pluralize(TeamMember.where(team_id: team.id).count, 'user'), [:admin, :users, query: team.name]
+            td
+              time.timeago datetime=team.created_at.getutc.iso8601
+            td.text-center.action
+              ul.button-group.actions.even
+                - #TODO add authorize
+                li
+                  = link_to admin_team_path(team), title: 'View', class: 'button info', style: 'text-align: left' do
+                    = fa_icon 'eye'
+                    | &nbsp; View

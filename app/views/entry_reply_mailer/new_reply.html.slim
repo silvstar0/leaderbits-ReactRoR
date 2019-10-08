@@ -1,0 +1,39 @@
+- raise unless @user_token.present?
+
+- #NOTE do not use link to leaderbit here because it may result in started/completed leaderbit with improperly assigned points
+- # or leaderbit with an entry which wasn't marked as completed(or started at all)
+h2 style="font-size: 17px; line-height: 24px; margin-top: 0"
+  / = link_to @leaderbit.name, leaderbit_url(@leaderbit, user_email: @email_recipient_user.email, user_token: @user_token), style: 'color: #747474;'
+  a style='color: #747474;' = @leaderbit.name
+
+p style="font-size: 14px; line-height: 24px; padding-bottom: 0; margin-bottom: 2px"
+  = link_to 'Original Entry:', entry_group_url(@entry_reply.entry.entry_group.to_param, user_email: @email_recipient_user.email, user_token: @user_token), style: 'color: #747474;'
+- if @parent_entry_reply.present?
+  div style="background: #F2F2F2; padding: 10px; font-size: 14px; color: #747474; text-align: left;"
+    strong = @parent_entry_reply.user.name
+    = simple_format(auto_link @parent_entry_reply.content)
+- else
+  div style="background: #F2F2F2; padding: 10px; font-size: 14px; color: #747474; text-align: left;"
+    = simple_format(auto_link @entry.content)
+  - # reply to entry
+  - if @entry_reply.user.favorited?(@entry)
+    p style="font-size: 14px; line-height: 24px; padding-top: 0; margin-top: 2px"
+      | #{@entry_reply.user.name_when_entry_author} liked this post.
+
+p style="font-size: 14px; line-height: 24px; padding-bottom: 0 ; margin-bottom: 2px"
+  = link_to 'Reply:', entry_group_url(@entry_reply.entry.entry_group.to_param, user_email: @email_recipient_user.email, user_token: @user_token, anchor: dom_id(@entry_reply)), style: 'color: #747474;'
+
+div style="background: #{EntryReply::Colors::BLUE}; padding: 10px; font-size: 14px; color: #747474; text-align: left;"
+  strong = @entry_reply.user.name
+  = simple_format(auto_link @entry_reply.content)
+
+div style="font-size: 14px; text-align: left; margin-top: 3px;"
+  = link_to 'Like',  toggle_like_entry_reply_url(@entry_reply.to_param, user_email: @email_recipient_user.email, user_token: @user_token), style: 'color: #747474; text-decoration: underline'
+  | &nbsp;&nbsp;
+  - raise unless @reply_action_url.present?
+  = link_to 'Reply', @reply_action_url, style: 'color: #747474; text-decoration: underline'
+
+small
+  = do_not_forward_email_footer_message
+
+= image_tag 'leaderbot-email.png', alt: 'LeaderBot', width: '293', height: '60'

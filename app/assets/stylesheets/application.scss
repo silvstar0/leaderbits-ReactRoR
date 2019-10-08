@@ -1,0 +1,173 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require chartist
+ *= require_tree .
+ *= require_self
+ *= require foundation_and_overrides
+ *= require font-awesome
+ */
+
+@media screen and (max-width: 640px) {
+  .row.full {
+    max-width: 100%;
+    width: 100%;
+
+    > {
+      .column:first-child,
+      .columns:first-child {
+        padding-left: 0;
+      }
+
+      .column:last-child,
+      .columns:last-child {
+        padding-right: 0;
+      }
+    }
+  }
+
+  ul.menu {
+    flex-direction: column;
+  }
+}
+
+.responsive-embed {
+  margin-bottom: 0;
+}
+
+.date.form-control {
+  display: inline-block;
+  margin-right: 5px;
+  width: 32%;
+}
+
+.dropdown .is-dropdown-submenu a {
+  //text-align: center;
+}
+
+[data-react-class=ReplyInput] {
+  display: inline-block;
+  margin-left: 15px;
+  padding-right: 17px;
+  width: 100%;
+}
+
+.pagination {
+  a {
+    display: inline-block;
+    font-size: 13px;
+  }
+
+  .current,
+  .disabled {
+    font-size: 13px;
+  }
+}
+
+.is-dropdown-submenu-item i {
+  text-align: center;
+  width: 25px;
+}
+
+// Preventing FOUC https://foundation.zurb.com/sites/docs/responsive-navigation.html#preventing-fouc
+
+.no-js {
+  .top-bar {
+    display: none;
+  }
+
+  [data-responsive-toggle],
+  .top-bar {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 40em) {
+  .no-js {
+    .top-bar {
+      display: block;
+    }
+
+    .title-bar {
+      display: none;
+    }
+  }
+}
+
+//Preventing FOUC https://foundation.zurb.com/sites/docs/responsive-navigation.html#preventing-fouc
+[data-responsive-menu] ul {
+  display: none;
+}
+
+.reveal {
+  color: #000 !important;
+
+  p {
+    color: #000 !important;
+  }
+}
+
+.badge {
+  border-radius: .25rem;
+  font-size: .7rem;
+}
+
+.PricingDetailsRow-cardBrands {
+  list-style: none;
+  margin: 5px 0 0 -1px;
+  padding: 0;
+
+  li {
+    background-image: image-url('card-brands.svg');
+    display: inline-block;
+    height: 25px;
+    margin: 15px 18px 0 0;
+    overflow: hidden;
+    text-indent: -500px;
+  }
+
+  .cardBrand-visa { width: 44px; }
+  .cardBrand-masterCard { background-position: -48px 0; width: 84px; }
+  .cardBrand-americanExpress { background-position: -138px 0; width: 52px; }
+  .cardBrand-dinersClub { background-position: -217px 0; width: 29px; }
+  .cardBrand-discover { background-position: -274px 0; width: 56px; }
+  .cardBrand-jcb { background-position: -357px 0; width: 28px; }
+  .cardBrand-chinaUnion { background-position: -408px 0; width: 31px; }
+  .apmBrand-applePay {
+    background-image: image-url('apm-applepay.svg');
+    background-size: 100%;
+    height: 20px;
+    position: relative;
+    top: -1px;
+    width: 41px;
+  }
+
+  .apmBrand-googlePay {
+    background-image: image-url('apm-googlepay.svg');
+    background-size: 100%;
+    height: 17px;
+    position: relative;
+    top: -2px;
+    width: 42px;
+  }
+}
+
+
+// newer version of zurb enforcing white bg so we're overriding it here
+.dropdown.menu {
+  li {
+    a {
+      background: transparent;
+    }
+  }
+}
+

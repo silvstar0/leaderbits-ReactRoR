@@ -1,0 +1,18 @@
+= simple_form_for [:admin, account], html: { multipart: true } do |f|
+  = f.input :name, required: true
+  = f.input :stripe_customer_id, label: 'Stripe Customer ID'
+  - if account.persisted?
+    div style="height: 15px"
+    = logo f.object
+  = f.input :logo, as: :file, hint: 'Choose file to upload new logo image'
+  = f.input :first_leaderbit_introduction_message, input_html:{ cols: 10, rows: 4}, hint: introducing_hint(account), as: :trix_editor
+
+  div style="height: 10px"
+  = f.input :day_of_week_to_send, collection: Date::DAYNAMES, required: true
+  = f.input :hour_of_day_to_send, collection: 0..23, required: true
+  = f.input :leaderbits_sending_enabled
+  = f.input :active_since, as: :date, html5: true, hint: "Since this date users will be able to sign in and receive LeaderBits. Until that moment user's account looks like is locked."
+  = f.association :custom_default_schedule, as: :select, collection: Schedule.all.pluck(:name, :id), hint: 'Default schedule for *new users* in this organization.<br>If you change schedule you will need to update users\' schedules manually'.html_safe
+
+  = f.submit class: "button"
+

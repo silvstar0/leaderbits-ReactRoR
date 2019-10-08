@@ -1,0 +1,13 @@
+- question = answer.question
+- input_id = "slider#{question.id}"
+
+label style="text-align: center; margin-bottom: 0" for=dom_id(question)
+  = question.title
+  - if question.hint.present?
+    small
+      = "(#{question.hint})"
+
+label style="text-align: center"
+  = "#{answer.params['value'] } / #{question.right_side}"
+
+br

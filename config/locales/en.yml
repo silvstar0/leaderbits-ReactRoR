@@ -1,0 +1,77 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# The following keys must be escaped otherwise they will not be retrieved by
+# the default I18n backend:
+#
+# true, false, on, off, yes, no
+#
+# Instead, surround them with single quotes.
+#
+# en:
+#   'true': 'foo'
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+en:
+  settings:
+    strength_level:
+      craft: Craft
+      craft_label: How strong are your skills related to the details of your current role?
+      culture: Culture
+      culture_label: How strong you are at understanding how to build and spread culture.
+      learning: Learning
+      learning_label: How strong are your skills to learn faster and most efficiently?
+      one_on_one: One on One
+      one_on_one_label: How strong are you at one-on-one conversations?
+      problem_solving: Problem Solving
+      problem_solving_label: How strong are you in problem solving? Do you have a library of refined problem solving methodologies readily accessible in the back of your mind?
+      growing: Growing
+      growing_label: How strong are your skills to grow yourself and improve?
+      managing: Managing
+      managing_label: How strong are your management abilities?
+      visionary: Visionary
+      visionary_label: How strong are you skills to envision a bigger brighter future for yourself, company, product?
+      business: Business
+      business_label: How strong are your general business skills?
+      communication: Communication
+      communication_label: How strong are your communication skills?
+      discipline: Discipline
+      discipline_label: How strong are your discipline skills? Think of the ability to make yourself do something you know you need to do even when you don't want to do it.
+      process: Process
+      process_label: How strong are your process skills? This would be the ability to create, refine and prune processes.
+      team_structure: Team Structure
+      team_structure_label: How strong are you team structure skills? Do you have awareness of the various styles of team structure and their effectiveness for what you're trying to accomplish?
+      team_management: Team Management
+      team_management_label: How strong are your team management skills? People aren't machines, productivity, demand, and the human component are a delicate balance.
+      strategy: Strategy
+      strategy_label: How strong are your strategy skills? Understanding Tactical Vs Strategic is key.
+      time_management: Time Management
+      time_management_label: How strong are your time management skills? How many of these do you have and exercise regularly?
+      stress: Stress
+      stress_label: How strong are your stress management skills? How well do you manage stress?
+      creativity: Creativity
+      creativity_label: How strong are your creativity skills? Do you have known techniques to active creativity on demand?
+      personal_development: Personal Development
+      personal_development_label: How strong are your skills for personal development? They are strong if you know them off the top of your head and execute them regularly.
+      personal_care: Personal Care
+      personal_care_label: How strong are your skills for taking care of yourself? Do you have specific tactics for your personal care?
+  entries:
+    points_earned_for_starting_challenge: "You earned %{points_earned} for starting this LeaderBit. Keep it up you have %{have_points_total}!"
+    points_earned_for_posting_entry: "You earned %{points_earned} for this entry. Keep it up you have %{have_points_total}!"

@@ -1,0 +1,11 @@
+<% if @entry.errors.present? %>
+  //reset form with failed entry
+  $("#new_entry").parent().html("<%= escape_javascript(render 'form', entry: @entry) %>");
+<% else %>
+  $("#new_entry").parent().html("<%= escape_javascript(render 'form', entry: @new_entry) %>");
+  $("ul.entries").prepend("<%= escape_javascript(render 'entry', entry: @entry) %>")
+<% end %>
+
+domReadyOrPjaxComplete();
+ReactRailsUJS.mountComponents();
+UnobtrusiveFlash.showFlashFromCookies();

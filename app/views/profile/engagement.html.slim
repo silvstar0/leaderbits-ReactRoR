@@ -1,0 +1,59 @@
+- content_for(:page_title, 'Engagement')
+
+.row
+  .small-12.large-12.large-centered.columns
+    .medium-8.small-12.columns
+      div style="display: flex; flex-direction: row; justify-content: space-between; height: 43px; font-weight: 400; background: #FAFAFA; border: 1px solid #CCCCCC; font-size: 18px; color: #4D4D4D; letter-spacing: -0.55px; padding: 10px; margin-bottom: 17px"
+        div
+          span.hide-for-small-only
+            | Layout:&nbsp;
+          = "#{value_link} | #{entries_link} | #{emails_link}".html_safe
+        - if entries_layout?
+          div
+            | #{unread_link} | #{all_link}
+
+      - if value_layout?
+        = render 'engagement_main_value'
+      - elsif entries_layout?
+        = render 'engagement_main_entries'
+      - elsif emails_layout?
+        = render 'engagement_main_emails'
+      - else
+        - raise "unknown layout type: #{params.inspect}"
+
+    .medium-4.small-12.columns style="text-align: center"
+      .show-for-small-only
+        div style="height: 20px"
+
+      - if request_type_selector_is_visbible?
+        .row
+          .small-12
+            = form_tag profile_engagement_path(layout: params[:layout], status: params[:status], Rails.configuration.preview_organization_engagement_as_admin => params[Rails.configuration.preview_organization_engagement_as_admin]), method: 'post' do |f|
+              select name="request_type" onchange="javascript: this.closest('form').submit()" style='height: 43px; background: #FAFAFA; -webkit-appearance: menulist; -moz-appearance: menulist; appearance: menulist'
+                option value=EngagementHelper::ALL_PEOPLE style="font-weight: bold"
+                  | All People
+                  - #NOTE it is different than filtered users in case you switched to a team and then want to switch back to "All people"
+                  - @all_users_in_selector.sort(&by_momentum).each do |user|
+                    option value=user.uuid disabled=""
+                      = "&nbsp;&nbsp;&nbsp;#{user.name}".html_safe
+
+                - #NOTE: Fabiana requested "People I mentor"|"Mentors" not to be displayed in case of organization engagement report preview as an admin
+                - if @users_i_mentor.present?
+                  option value=EngagementHelper::PEOPLE_I_MENTOR style="font-weight: bold" selected=(params[:request_type].to_s == EngagementHelper::PEOPLE_I_MENTOR.to_s)
+                    | People I Mentor
+                  - @users_i_mentor.each do |user|
+                    option value=user.uuid disabled=""
+                      = "&nbsp;&nbsp;&nbsp;#{user.name}".html_safe
+
+                - if @teams_with_users.present?
+                  - @teams_with_users.each do |team, users|
+                    option value="team.#{team.id}" style="font-weight: bold" selected=(params[:request_type] == "team.#{team.id}")
+                      | Team:&nbsp;
+                      = team.name
+                    - #users = users.sort(&by_momentum)
+                    - users.each do |user|
+                      option value=user.uuid disabled=""
+                        = "&nbsp;&nbsp;&nbsp;#{user.name}".html_safe
+
+      div
+        = react_component('EngagementRightColumn', { users: @filtered_users.sort(&by_momentum).map { |u| as_engagement_user u } })

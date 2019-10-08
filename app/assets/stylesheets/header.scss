@@ -1,0 +1,44 @@
+@import 'settings';
+
+#nav-container {
+  margin-bottom: 15px;
+
+  .title-bar {
+    background-color: #f2f2f2;
+  }
+
+  .menu-icon::after {
+    //the block itself, the first line
+    background: #555;
+
+    // respect WebKit
+    -webkit-box-shadow: 0 7px 0 #555, 0 14px 0 #555;
+
+    // middle and bottom
+    box-shadow: 0 7px 0 #555, 0 14px 0 #555;
+  }
+
+  .title-bar-title {
+    //position: relative
+    //left: -30%
+    a {
+      color: #fff;
+    }
+  }
+}
+
+//@media screen and (max-width: 640px)
+//  .title-bar
+//    height: 76px
+//  #nav-container
+//    margin-bottom: 39px
+
+// Small only
+@media screen and (max-width: 39.9375em) {
+  .title-bar {
+    height: 76px;
+  }
+}
+
+// Large and up
+@media screen and (min-width: 64em) {}

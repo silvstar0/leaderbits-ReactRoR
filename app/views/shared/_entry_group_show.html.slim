@@ -1,0 +1,145 @@
+.reflectdb id=dom_id(entry_group)
+  - leaderbit = entry_group.leaderbit
+
+  .row style="margin-bottom: 1.25rem"
+    .small-4.columns.medium-centered.entries-list-image-container data-equalizer-watch="foo#{entry_group.id}" style="display: flex; flex-direction: column; align-self: center" title=leaderbit.name
+      = video_cover(leaderbit)
+
+    - can_mark_as_read = policy(entry_group).mark_as_read?
+
+    .small-4.medium-centered data-equalizer="foo#{entry_group.id}" style="display: flex; flex-direction: column; justify-content: space-between"
+      a.button.reply-button.expanded data-toggle="readModal#{entry_group.id}" style="cursor: pointer; margin: 0 0 1px 0" Read LeaderBit
+      .reveal.reveal-modal.full id="readModal#{entry_group.id}" data-reveal="true" data-overlay="false" aria-hidden="true" style="color: #fff"
+        a.close-reveal-modal data-close="" aria-label="Close" &#215;
+        = raw leaderbit.body
+
+      - if can_mark_as_read
+        a.button.reply-button.expanded data-toggle="watchModal#{entry_group.id}" style="cursor: pointer; margin: 0" Watch Video
+        .reveal id="watchModal#{entry_group.id}" data-reveal="true" data-overlay="false" aria-hidden="true" style="color: #fff"
+          a.close-reveal-modal data-close="" aria-label="Close" &#215;
+
+          .responsive-embed style="margin-top: 35px"
+            iframe src="#{leaderbit.url}" width="100%" height="350" frameborder="0" allowfullscreen="allowfullscreen"
+      - else
+        a.hide-for-small-only.button.reply-button.expanded data-toggle="watchModal#{entry_group.id}" style="cursor: pointer; margin: 0" Watch Video
+        .reveal id="watchModal#{entry_group.id}" data-reveal="true" data-overlay="false" aria-hidden="true" style="color: #fff"
+          a.close-reveal-modal data-close="" aria-label="Close" &#215;
+
+          .responsive-embed style="margin-top: 35px"
+            iframe src="#{leaderbit.url}" width="100%" height="350" frameborder="0" allowfullscreen="allowfullscreen"
+
+    .small-4.columns.medium-centered data-equalizer-watch="foo#{entry_group.id}"
+      - if can_mark_as_read
+        .mark-entry-as-read-container
+          = link_to 'Mark Entry as Read', mark_as_read_entry_group_path(entry_group), remote: true, 'data-confirm': 'Are you sure?', method: 'post', class: 'reply-button hollow button2 primary expanded2'
+      - else
+        a.show-for-small-only.button.reply-button.expanded data-toggle="watchModal#{entry_group.id}" style="cursor: pointer; margin: 0" Watch Video
+        .reveal id="watchModal#{entry_group.id}" data-reveal="true" data-overlay="false" aria-hidden="true" style="color: #fff"
+          a.close-reveal-modal data-close="" aria-label="Close" &#215;
+
+          .responsive-embed style="margin-top: 35px"
+            iframe src="#{leaderbit.url}" width="100%" height="350" frameborder="0" allowfullscreen="allowfullscreen"
+
+  - first_entry_in_group = true
+  - #NOTE keep in mind that we only have entry groups with at least one non-discarded entry inside
+  - entry_group.entries.select { |entry| !entry.discarded? }.each do |entry|
+    .row
+      .entry-item id="#{dom_id(entry)}" style="width: 100%"
+        .small-12.columns.medium-centered style="margin-bottom: 15px"
+          div style="background-color: #{EntryReply::Colors::GREY}"
+            .content style="overflow-x: hidden"
+              div
+                p.text-left style="float: left"
+                  strong
+                    = link_to entry_group.user.name_when_entry_author, user_path(entry_group.user.to_param)
+                - if current_user.can_see_schedule_name_in_entries_list?
+                  .hide-for-small-only
+                    p.text-right
+                      = schedule_name entry_group.user
+              div style="clear: both"
+                = auto_link entry.content
+            .footer.text-left style="display: block; clear: both"
+              .info style="height: auto; padding-left: 0; width: 100%"
+                - if current_user.system_admin? || current_user.leaderbits_employee_with_access_to_any_organization?
+                  - if entry.user.admin_notes.present? && first_entry_in_group
+                    - additionalStyle = "font-size: 30px; height: 40px; width: 40px; border:1px solid #432CBE; color: #432CBE;"
+                  - else
+                    - additionalStyle = "font-size: 20px; height: 30px; width: 30px; border:1px solid #333;"
+
+                  a onClick="javascript: this.style.display = 'none'; this.nextElementSibling.style.display = 'block';" style="#{additionalStyle} display: block; text-align: center; border-radius:50%; -moz-border-radius:50%; -webkit-border-radius:50%; margin-top: 10px;"
+                    = fa_icon 'lightbulb-o'
+                  div style="border: 1px dotted #333; display: none; padding: 10px; margin-top: 10px"
+                    - if first_entry_in_group
+                      = render 'shared/admin_notes', user: entry.user
+                    div
+                      = fa_icon 'eye-slash'
+                      |&nbsp;
+                      = "Visibility: #{entry_visibility entry}"
+
+                    div
+                      = fa_icon 'clock-o'
+                      |&nbsp;
+                      = entry.display_time.in_time_zone(entry.user.time_zone).stamp('23:59 Monday')
+                      = " (#{entry.user.time_zone})"
+
+                    - completed_sessions_count = Answer.where(user: nil).where('anonymous_survey_participant_id IN(SELECT id FROM anonymous_survey_participants WHERE added_by_user_id = ?)', entry.user).pluck(:anonymous_survey_participant_id).uniq.count
+                    - if completed_sessions_count.positive?
+                      = link_to profile_team_survey_360_path(user_id: entry.user.id), class: 'small button hollow', style: 'margin: 10px 10px 10px 0', title: "#{completed_sessions_count} records", target: '_blank' do
+                        = fa_icon 'align-left'
+                        |&nbsp;
+                        = raw "360 Survey Results"
+                    - else
+                      div
+                        | No 360 Team Survey results
+
+                    - if Answer.where(user: entry.user).exists?
+                      = link_to step2_path(user_id: entry.user.id), class: 'small button hollow', style: 'margin: 10px 10px 10px 0', target: '_blank' do
+                        i.fa.fa-external-link
+                        | &nbsp;Strengths Finder
+                    - else
+                      div
+                        | No Strengths Finder results
+
+                    - if display_strength_levels_preview_link?(user_id: entry.user_id)
+                      = link_to strength_levels_settings_path(preview_user_id: entry.user_id), class: 'small button hollow', style: 'margin: 10px 10px 10px 0', target: '_blank' do
+                        = fa_icon 'signal'
+                        |&nbsp;
+                        | Strength Levels
+
+                    = link_to entry_groups_path(user: { uuid: entry.user.uuid}), title: 'Display all entries from this user', class: 'small button hollow', style: 'margin: 10px 10px 10px 0', target: '_blank' do
+                      = fa_icon 'commenting'
+                      |&nbsp;
+                      | All Entries
+
+                    = link_to admin_user_path(entry.user), title: "Display user profile in admin interface(to see full statistics)", class: 'small button hollow', style: 'margin: 10px 10px 10px 0', target: '_blank' do
+                      = fa_icon 'external-link'
+                      |&nbsp;
+                      | Admin User Profile
+
+                    = link_to "/blazer/queries/4-momentum-by-user?email=#{entry.user.email}", class: 'small button hollow', style: 'margin: 10px 10px 10px 0', target: '_blank' do
+                      = fa_icon 'external-link'
+                      |&nbsp;
+                      | Momentum
+
+                    / = link_to "/blazer/queries/3-leaderbits-watch-time-by-user?email=#{entry.user.email}", class: 'small button hollow', style: 'margin: 10px' do
+                    /   = fa_icon 'external-link'
+                    /   |&nbsp;
+                    /   | LeaderBits watch time
+
+                = link_to entry_group_path(entry_group.to_param) do
+                  time.timeago datetime=entry.display_time.getutc.iso8601
+          .clearfix
+
+          - #liked_by_current_user is needed if can_toggle_entry_like
+          = react_component('EntryReplyCollection', { can_toggle_entry_like: true,
+                  user_action: user_action_clarification_in_react_component(entry),
+                  content: entry_reply_collection_prefilled_content,
+                  prefilled_replies: entry.prefilled_replies(current_user),
+                  liked_by_current_user: current_user.favorited?(entry),
+                  entry_id: entry.id,
+                  current_user: current_user.name,
+                  entry_liked_message: LikedMessageGenerator.new(entry).return_for_user(current_user),
+                  entry_group_id: entry.entry_group_id,
+                  replies: entries_index_replies(entry)})
+        br
+    - first_entry_in_group = false

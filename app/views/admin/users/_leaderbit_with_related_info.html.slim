@@ -1,0 +1,30 @@
+= content_tag_for :tr, leaderbit, id: "leaderbit_#{leaderbit.id}", style: 'border: 4px solid #000' do
+  td
+    span style="display: inline-block; width: 100px; padding: 1px"
+      = video_cover leaderbit
+  td
+    | &nbsp;
+    = link_to [:admin, leaderbit], style: 'font-size: 14px' do
+      strong
+        = leaderbit.clean_name
+    div
+      small
+        = "##{lookup_positions.detect { |leaderbit_schedule| leaderbit_schedule.leaderbit_id == leaderbit.id }.position} in #{@user.schedule.name} schedule#{position_suffix}"
+
+    div
+      small
+        | Tags:&nbsp;
+        = leaderbit.tags.collect(&:label).join(', ')
+
+
+    div
+      small
+        | Sent:&nbsp;
+        - @all_user_sent_emails.each do |user_sent_email|
+          - next if user_sent_email.resource_type != Leaderbit.to_s
+          - next if user_sent_email.resource_id != leaderbit.id
+
+          a href=preview_path_for_user_sent_email(user_sent_email) style="text-decoration: underline; margin-right: 3px"
+            time.timeago style="cursor: pointer" datetime=user_sent_email.created_at.getutc.iso8601 title="Received at: #{user_sent_email.created_at.in_time_zone(@user.time_zone).strftime('%m/%d/%Y %I:%M:%S %Z')}"
+            / | &nbsp;|
+          | &nbsp;

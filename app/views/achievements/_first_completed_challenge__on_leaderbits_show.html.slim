@@ -1,0 +1,19 @@
+header
+  | Achievement Unlocked
+
+.picture
+  svg height="169px" version="1.1" viewbox=("0 0 134 169") width="134px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    g#Desktop fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"
+      g#Desktop-HD-Achievement-Unlocked fill="#2EC0DB" transform="translate(-653.000000, -382.000000)"
+        g#Achievement-Modal transform="translate(532.000000, 148.000000)"
+          polygon id="lightning-[#1262]" points=("188 403 188 335.4 121 335.4 188 234 188 301.6 255 301.6")
+
+div
+  h3= points_message
+div
+  h4= challenge_name_completed_message
+
+footer
+  = congrats_achievement_message
+
+= image_tag 'close-icon.png', class: 'close-button', 'data-close' => ''

@@ -1,0 +1,15 @@
+var existingContainer = document.getElementById('achievement-unlocked-reveal-container');
+var newContainer;
+if (existingContainer == null) {
+  newContainer = document.createElement('div');
+  newContainer.classList.add('reveal');
+  newContainer.setAttribute('id', 'achievement-unlocked-reveal-container');
+  newContainer.dataset.reveal = true;
+  document.body.appendChild(newContainer);
+}
+
+var achievementModalContainer = document.getElementById('achievement-unlocked-reveal-container');
+achievementModalContainer.innerHTML = "<%= j(render 'first_completed_challenge__on_leaderbits_show') %>";
+
+$(document).foundation(); // activates reveal/modal
+$("#achievement-unlocked-reveal-container").foundation("open");

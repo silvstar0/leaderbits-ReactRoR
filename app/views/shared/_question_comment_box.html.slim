@@ -1,0 +1,9 @@
+label for=dom_id(question)
+  = raw question_title(question)
+  - if question.mandatory?
+    small required
+
+- if question.mandatory?
+  textarea id=dom_id(question) name="answers[#{question.id}]" required=""
+- else
+  textarea id=dom_id(question) name="answers[#{question.id}]"

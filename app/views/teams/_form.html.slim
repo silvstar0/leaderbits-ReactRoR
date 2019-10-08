@@ -1,0 +1,15 @@
+- content_for(:page_title, 'Teams')
+- if team.persisted?
+  - content_for(:page_title, " : #{team.name}")
+
+.row
+  .small-12.columns
+    h4.text-center
+      = link_to 'Teams', company_path
+
+    = simple_form_for team, url: url, html: {class: "custom"}, remote: false do |f|
+      = f.input :name
+
+      div
+        = f.submit "Save", class: "button", style: 'margin: 0 10px 0 0'
+        | or #{link_to 'Cancel', company_path}

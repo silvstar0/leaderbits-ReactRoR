@@ -1,0 +1,181 @@
+- content_for(:page_title, "#{@user.name} : Users : Admin")
+
+.row.full-width
+  .medium-12.columns
+    .pull-left
+      h1 style="padding-top: 0; margin-top: 0"= @user.name
+  .medium-12.columns style="text-align: center"
+    ul style="margin: 0"
+      li style="list-style-type: none; display: inline"
+        = link_to password_reset_admin_user_path(@user), class: 'button secondary', style: 'text-align: left; background-color: #ff9999' do
+          | URL for user to set a password
+      li style="list-style-type: none; display: inline"
+        = link_to admin_report_path(anchor: dom_id(@user)), class: 'button alert hollow', target: '_blank' do
+          = fa_icon 'external-link'
+          | &nbsp; In Admin Report
+      - if @user.intercom_user_id?
+        li style="list-style-type: none; display: inline"
+          = link_to "https://app.intercom.io/a/apps/#{ENV["INTERCOM_APP_ID"]}/users/#{@user.intercom_user_id}", class: 'button success', target: '_blank' do
+            = fa_icon 'external-link'
+            | &nbsp; Intercom
+      - if policy([:admin,  @user]).edit?
+        li style="list-style-type: none; display: inline"
+          = link_to [:edit, :admin, @user], class: 'button success' do
+            = fa_icon 'edit'
+            | &nbsp; Edit
+      - if policy([:admin, @user]).switch_user_as?
+        li style="list-style-type: none; display: inline"
+          = link_to "/switch_user?scope_identifier=user_#{@user.id}", title: 'Sign In', class: 'button warning', style: 'text-align: left' do
+            = fa_icon 'hand-lizard-o'
+            | &nbsp;Sign In
+      - if policy([:admin,  @user]).send_lifetime_progress_report?
+        li style="list-style-type: none; display: inline"
+          = link_to [:send_lifetime_progress_report, :admin, @user], method: :post, class: 'button', data: { confirm: %(Are you sure you want to send lifetime progress report to this user?') } do
+            = fa_icon 'envelope-open'
+            | &nbsp; Send Lifetime Progress Report
+      - if policy([:admin, @user]).toggle_discard?
+        li style="list-style-type: none; display: inline"
+          = link_to toggle_discard_admin_user_path(@user), method: :post, class: 'button secondary', data: { confirm: "Are you sure to continue?" }, style: 'text-align: left' do
+            = fa_icon 'pause-circle'
+            - if @user.discarded?
+              | &nbsp;Unlock
+            - else
+              | &nbsp;Lock
+
+      - if policy([:admin, @user]).destroy?
+        li style="list-style-type: none; display: inline"
+          = link_to [:admin, @user], method: :delete, title: 'Destroy', class: 'button alert', data: { confirm: 'User and all of its data would be completely destroyed. Are you sure to continue?' }, style: 'text-align: left' do
+            = fa_icon 'remove'
+            | &nbsp;Destroy
+
+.row.full-width
+  .large-12
+    .row
+      .large-12.columns
+        ul.tabs#example-tabs data-tabs=""
+          li.tabs-title.is-active
+            a href="#panel1" aria-selected="true" Attributes
+          li.tabs-title
+            a href="#panel2" Stats
+          li.tabs-title
+            a href="#panel3" All sent emails
+          li.tabs-title
+            a href="#panel-notes" Admin Notes
+          - if @answers.present?
+            li.tabs-title
+              a href="#panel4" Survey
+          - if @vacation_modes.present?
+            li.tabs-title
+              a href="#panel5" Vacation
+
+          - count = @user.entries.count
+          li style="display: inline-block; padding: 1.25rem 1.5rem; font-size: 0.75rem; line-height: 1; color: #1779ba;"
+            = link_to entry_groups_path(user_uuid: @user.uuid), title: 'Display all entries from this user' do
+              = fa_icon 'external-link'
+              |  Entries(#{count})
+
+          - if @anonymous_survey_completed_times.positive?
+            li style="display: inline-block; padding: 1.25rem 1.5rem; font-size: 0.75rem; line-height: 1; color: #1779ba;"
+              = link_to profile_team_survey_360_path(user_id: @user.id), title: 'Display average results of anonymous surveying' do
+                = fa_icon 'external-link'
+                |  Survey results(#{pluralize(@anonymous_survey_completed_times, 'participant')})
+
+        .tabs-content data-tabs-content="example-tabs"
+          .tabs-panel.is-active#panel1
+            = render 'shared/admin/attributes_table', model: @user,
+                    attributes: [:organization,
+                            :created_at,
+                            :email,
+                            :last_completed_onboarding_step_for_active_recipient,
+                            :discarded_at,
+                            :last_sign_in,
+                            :total_points,
+                            :momentum_as_string,
+                            :leaderbits_sending_enabled,
+                            :account_leaderbits_sending_enabled,
+                            :last_challenge_completed,
+                            :day_of_week_to_send,
+                            :hour_of_day_to_send,
+                            :time_zone,
+                            :schedule,
+                            :goes_through_leader_welcome_video_onboarding_step,
+                            :goes_through_leader_strength_finder_onboarding_step,
+                            :goes_through_team_survey_360_onboarding_step,
+                            :goes_through_organizational_mentorship_onboarding_step,
+                            :created_by_user,
+                            :humanized_roles]
+
+            table width="100%" style="border: 0; margin: 0"
+              tbody style="border: 0"
+                tr
+                  td colspan=2
+                    .text-center
+                      - if Answer.where(user: nil).where('anonymous_survey_participant_id IN(SELECT id FROM anonymous_survey_participants WHERE added_by_user_id = ?)', @user.id).exists?
+                        = link_to profile_team_survey_360_path(user_id: @user.id), class: 'small hollow button primary', style: 'margin: 0' do
+                          i.fa.fa-external-link
+                          | &nbsp;Display Survey Anonymous Results
+                      - else
+                        div
+                          blockquote
+                            | Anonymous Survey: No data
+                  td colspan=2
+                    .text-center
+                      - if Answer.where(user: @user).exists?
+                        = link_to step2_path(user_id: @user.id), class: 'small hollow button primary text-right', style: 'margin: 0' do
+                          i.fa.fa-external-link
+                          | &nbsp;Display Leader Strengths
+                      - else
+                        div
+                          blockquote
+                            | Leader Strengths: No data
+
+
+
+          .tabs-panel#panel2
+            = render 'admin/users/stats_panel', user: @user
+
+          .tabs-panel#panel3
+            table style="border: 1px solid #333; width: 100%"
+              - @user.user_sent_emails.order(created_at: :desc).each do |user_sent_email|
+                tr
+                  td
+                    a href=preview_path_for_user_sent_email(user_sent_email) Display
+                  td
+                    = raw user_sent_email_to_s user_sent_email
+                  td
+                    - time = %(<small><time class="timeago" datetime="#{user_sent_email.created_at.getutc.iso8601}" /></small>)
+                    = raw time
+
+          .tabs-panel#panel-notes
+            = render 'shared/admin_notes', user: @user
+
+          - if @answers.present?
+            .tabs-panel#panel4
+              - @answers.each do |answer|
+                = render "admin/users/question_#{answer.question.type.underscore}", answer: answer
+
+          - if @vacation_modes.present?
+            .tabs-panel#panel5
+              - @vacation_modes.each do |vacation_mode|
+                div style="border: 1px solid #cacaca; margin-bottom: 15px; padding: 10px"
+                  = vacation_mode.starts_at.in_time_zone(ActiveSupport::TimeZone[@user.time_zone])
+                  | &nbsp; - &nbsp;
+                  = vacation_mode.ends_at.in_time_zone(ActiveSupport::TimeZone[@user.time_zone])
+                  blockquote style="margin-top: 15px"
+                    = vacation_mode.reason
+
+                  = link_to 'Delete', [:admin, vacation_mode], method: :delete, data: { confirm: 'Are you sure you want to delete this vacation mode?' }
+
+.row
+  .large-6.columns
+    div
+      = render 'admin/users/instant_queue', user: @user
+
+  .large-6.columns style="position: relative"
+      = render 'shared/user_leaderbits_info_right_sidebar', user: @user
+
+.row style="margin-top: 15px"
+  .large-6.columns class=(@user.personalized_leaderbits_algorithm_instead_of_regular_schedule? ? 'discarded-list-item' : '')
+    = render 'admin/users/all_schedule_leaderbits', user: @user
+  .large-6.columns class=(@user.personalized_leaderbits_algorithm_instead_of_regular_schedule? ? '' : 'discarded-list-item') style="padding-top: 0"
+    = render 'admin/users/all_personalized_leaderbits', user: @user

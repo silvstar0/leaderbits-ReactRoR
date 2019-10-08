@@ -1,0 +1,12 @@
+- raise if token.blank?
+div style="text-align: left; float: left"
+  strong style="font-size: 16px"= leaderbit_log.leaderbit.name.gsub('Challenge: ', '')
+div style="text-align: right; float: right"= leaderbit_log.updated_at.stamp("11/31/1970")
+div style="clear: both; padding: 3px 0"
+  = leaderbit_log.leaderbit.user_action_title_suffix.capitalize
+- #TODO add sanity checks?
+- entry_group = EntryGroup.where(leaderbit: leaderbit_log.leaderbit, user: leaderbit_log.user).last!
+= link_to 'See details', entry_group_url(entry_group.to_param, user_email: recipient_user.email, user_token: token)
+
+br
+br

@@ -1,0 +1,26 @@
+- if user.schedule_id.present?
+  table width="100%"
+    tbody
+      tr
+        td Challenges completed for default schedule
+        td
+          = user.challenges_completed_for_default_schedule
+      tr
+        td Challenges sent for default schedule
+        td
+          = user.challenges_sent_for_default_schedule
+      tr
+        td Challenges unsent for default schedule
+        td
+          = user.challenges_unsent_for_default_schedule
+      tr
+        td Challenges sent but not completed
+        td
+          = user.challenges_sent_but_not_completed
+      tr
+        td Total time watched
+        td
+          = user.total_time_watched
+      tr
+        td Challenges watched but not completed
+        td = user.challenges_watched_but_not_completed

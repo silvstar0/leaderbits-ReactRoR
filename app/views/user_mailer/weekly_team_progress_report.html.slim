@@ -1,0 +1,72 @@
+h1 style="text-align: center" Weekly summary
+
+h3 style="text-align: center"
+   = @t1.stamp('Monday, August 31th')
+   | &nbsp;-&nbsp;
+   = @t2.stamp('Monday, August 31th')
+
+p Hi #{@user.first_name},
+p Here's a summary of what happened on your team last week:
+
+font
+  | Your team completed&nbsp;
+  strong = pluralize(@this_week_completed_leaderbit_logs.count, 'challenge')
+  = "#{@completed_challenges_explanation}. "
+
+font
+  | Created&nbsp;
+  strong = pluralize(@this_week_team_points.sum(:value), 'point')
+  = "#{@points_explanation}. "
+
+font
+  | This week average momentum is&nbsp;
+  strong = "#{@this_week_average_momentum}%"
+  = "#{@momentum_explanation}."
+
+  - at_time = 1.week.ago
+table
+  thead
+    tr
+      th style="text-align: center"
+        h3 style="padding: 5px 0" Name
+      th style="text-align: center"
+        h3 style="padding: 5px 0" Momentum
+      - if @this_week_completed_leaderbit_logs.count.positive?
+        th style="text-align: center"
+          h3 style="padding: 5px 0" Actions
+
+  tbody
+    - @active_recipient_team_users.sort_by { |user| user.momentum - user.momentum_at_time(at_time) }.reverse.each do |user|
+      tr
+        td style="text-align: center"
+          h3
+            = user.name
+        td style="text-align: center"
+          = user.momentum
+          | %
+          br
+
+          - diff = user.momentum - user.momentum_at_time(at_time)
+          - unless diff.zero?
+            | (#{ sprintf("%+d", diff) }%)
+        - if @this_week_completed_leaderbit_logs.count.positive?
+          td style="text-align: center"
+            - @this_week_completed_leaderbit_logs.select { |leaderbit_log| leaderbit_log.user_id == user.id }.group_by { |ll| ll.updated_at.to_date }.each do |date, leaderbit_logs|
+              div
+                small
+                  strong= date.stamp("11/31/1970")
+                br
+                - leaderbit_logs.each do |leaderbit_log|
+                  small
+                    strong = leaderbit_log.leaderbit.name
+
+                  div
+                    small= leaderbit_log.leaderbit.user_action_title_suffix.capitalize
+                  br
+      tr
+        - if @this_week_completed_leaderbit_logs.count.positive?
+          td colspan=3
+            div style="width: 100%; height: 1px; background-color: #333"
+        - else
+          td colspan=2
+            div style="width: 100%; height: 1px; background-color: #333"

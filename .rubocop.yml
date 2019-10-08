@@ -1,0 +1,131 @@
+require: rubocop-rspec
+inherit_from: .rubocop-https---relaxed-ruby-style-rubocop-yml
+AllCops:
+  Exclude:
+    - 'bin/*'
+    - 'lib/staging.rb'
+    - 'vendor/**/*'
+    - 'db/schema.rb'
+    - 'config/initializers/active_storage.rb'
+    - 'config/application.rb'
+    - 'node_modules/**/*'
+    -
+Lint/Void:
+  Enabled: false
+
+Performance/UnfreezeString:
+  Enabled: false
+
+Style/IdenticalConditionalBranches:
+  Enabled: false
+
+Style/GlobalVars:
+  Enabled: true
+  Exclude:
+    - 'config/initializers/rollout.rb'
+    - 'app/models/leaderbit_log.rb'
+
+Style/FormatStringToken:
+  Enabled: false
+
+# #overriding password_required?
+Lint/NestedMethodDefinition:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
+
+Style/IfInsideElse:
+  Enabled: true
+  # users#billing is quite big but straightforward so ignore for now
+  # profile controller - engagement report is now rather complicated and I don't have time to do it properly. Feel free to fix it and restore rubocop rule
+  Exclude:
+    - 'app/controllers/users_controller.rb'
+    - 'app/controllers/profile_controller.rb'
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+# jobs are rather hard to refactore. Alternative solution introduces significant overhead so fix other rubocop rules instead
+RSpec/AnyInstance:
+  Enabled: true
+  Exclude:
+    - 'spec/jobs/process_inbound_message_job_spec.rb'
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/RepeatedDescription:
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Enabled: true
+  Exclude:
+    - spec/lib/active_support_notifications_spec.rb
+    - spec/factories_spec.rb
+    - spec/lib/tasks/*_spec.rb
+    - spec/seed_spec.rb
+
+Lint/UnreachableCode:
+  Enabled: true
+  Exclude:
+    - lib/tasks/hourly.rake
+    - lib/tasks/daily.rake
+    - lib/tasks/ten_minute.rake
+
+Lint/UnderscorePrefixedVariableName:
+  Enabled: true
+  Exclude:
+    - lib/point_system.rb
+
+# Indent one level for follow-up lines
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
+
+# Indent one level for follow-up lines
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+#otherwise you won't be able to use #ANNOTATIONS
+Layout/LeadingCommentSpace:
+  Enabled: false
+
+#otherwise you won't be able to use annotate_models
+Layout/EmptyLines:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleDescribes:
+  Enabled: true
+  Exclude:
+    - spec/features/mailer_previews_spec.rb
+
+Lint/AmbiguousBlockAssociation:
+  # Until https://github.com/rubocop-hq/rubocop/issues/4198#issuecomment-290338661 is fixed
+  Enabled: false

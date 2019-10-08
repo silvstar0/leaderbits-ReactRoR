@@ -1,0 +1,47 @@
+- content_for(:page_title, 'Strength Levels')
+
+.row.header
+  .background.small-centered.small-12.columns
+    svg version="1.1" viewbox=("0 0 154 149") xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+      g#Desktop fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"
+        |        
+        g#Desktop-Dashboard-Copy fill="#FFFFFF" transform="translate(-642.000000, -120.000000)"
+          |            
+          g#fi-anchor transform="translate(642.000000, 120.000000)"
+            |                
+            path#Shape d="M134.747745,76.127204 C134.19241,75.1940543 133.163939,74.5454959 131.971073,74.5454959 C130.613812,74.5454959 129.465052,75.3760378 129.015973,76.533763 L110.655861,107.242519 C110.216807,107.767174 109.942147,108.425412 109.942147,109.153346 C109.942147,110.84347 111.357547,112.208347 113.103743,112.208347 L117.895255,112.208347 C109.91007,120.707366 99.1381892,126.703143 86.9809803,128.857906 L86.9809803,72.3268454 L105.182712,72.3268454 C106.928907,72.3268454 108.346313,70.9619687 108.346313,69.2718449 L108.344308,56.1070774 C108.344308,54.4188896 106.928907,53.052077 105.182712,53.052077 L86.9809803,53.052077 L86.9809803,42.6751426 C94.8097898,39.0664475 100.234824,31.3728025 100.234824,22.4362486 C100.234824,10.0439432 89.8318297,0 77.0010024,0 C64.1701751,0 53.7671809,10.0439432 53.7671809,22.4362486 C53.7671809,31.3747385 59.1902102,39.0664475 67.0210245,42.6751426 L67.0210245,53.052077 L48.8192931,53.052077 C47.0710929,53.052077 45.6556922,54.4188896 45.6556922,56.1032054 L45.6536874,69.2737809 C45.6576971,70.9639047 47.0710929,72.3268454 48.8152835,72.3268454 L67.0190197,72.3268454 L67.0190197,128.857906 C54.8618108,126.705079 44.0899304,120.707366 36.1047452,112.208347 L40.8942524,112.208347 C42.6424526,112.208347 44.0578533,110.84347 44.0578533,109.153346 C44.0578533,108.597716 43.8914535,108.082741 43.622808,107.63359 L24.8055979,76.127204 C24.2502636,75.1940543 23.2217926,74.5454959 22.0269218,74.5454959 C20.6736705,74.5454959 19.5289201,75.3721658 19.0778364,76.524083 L0.709705136,107.246391 C0.27265508,107.771046 0,108.427348 0,109.153346 C0,110.84347 1.41540064,112.208347 3.16159604,112.208347 L11.619918,112.208347 C24.5469765,134.172213 48.9696544,149 77.0030072,149 C105.03636,149 129.459038,134.174149 142.382087,112.210283 L150.838404,112.210283 C152.586604,112.210283 154,110.845406 154,109.155282 C154,108.599652 153.835605,108.084677 153.564955,107.63359 L134.747745,76.127204 Z M63.919573,22.4401206 C63.919573,15.4627938 69.7776476,9.80387979 77.0030072,9.80387979 C84.226362,9.80387979 90.0864415,15.4627938 90.0864415,22.4401206 C90.0864415,29.4097034 84.226362,35.0705534 77.0030072,35.0705534 C69.7776476,35.0705534 63.919573,29.4116394 63.919573,22.4401206 Z"
+            |            
+          |        
+        |    
+
+  .text.medium-5
+    - if @preview_user.present?
+      | Strength Levels of #{@preview_user.name}
+    - else
+       | Strength Levels
+
+.row
+  .small-centered.small-10.small-centered.columns
+    p.message style=('text-decoration: line-through' if @preview_user.present?)
+      | Select what areas you are strongest in to gain additional points and unlock future levels faster.
+
+    p.text-center style=('text-decoration: line-through' if @preview_user.present?)
+      | The left is 0 the right is 100. Drag the slider to the left or right based on how strong you feel in each specific area. This will allow us to know where you are strongest. Why? You'll need to train both strong and weak areas to get the best results. This allows us to balance the challenges you receive so you will be well rounded.
+
+
+= simple_form_for @strength_levels, url: strength_levels_settings_path, method: :patch do |f|
+  .row
+    .small-10.columns.small-centered
+      - StrengthLevelsFormObject::Levels::ALL.each do |symbol_name|
+        = render 'strength_level', f: f, symbol_name: symbol_name
+
+      - unless @preview_user.present?
+        .actions
+          = f.button :submit, value: 'Submit', class: "expanded", data: {disable_with: "Updating... 1 moment."}
+
+
+- content_for :javascript do
+  |
+    $(function(){
+      $(document).foundation();
+    });

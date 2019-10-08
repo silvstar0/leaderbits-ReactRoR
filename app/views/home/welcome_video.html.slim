@@ -1,0 +1,30 @@
+.row.welcome_custom
+  .small-12.medium-7.medium-centered.columns.text-center
+    - #first_name is absent for new mentees by default
+    - prefix = "#{current_user.first_name}, "
+    p.welcome-text #{prefix}Your life is about to get a lot more interesting.
+    p.welcome-text style="margin-top: 10px" Watch the 3 minute video below to begin.
+    .responsive-embed
+      = tracking_welcome_video_iframe on_finish_display_element_id: 'welcome-video-completed', on_finish_hide_element_id: 'welcome-arrow-up-img'
+
+    - # NOTE: in 2019 it may look strange - why would user would want to watch the welcome video and NOT proceed to other onboarding steps
+    - # but we had a few special users like this in the past.
+    - # You may need to rethink whether this condition is still needed in the future
+    - onboarding = UserOnboarding.new current_user
+    - next_step = onboarding.next_step_after User::OnboardingSteps::WELCOME_VIDEO_ONBOARDING_STEP
+
+    - #if after_welcome_video_user_instantly_starts_1st_leaderbit?
+    - if next_step.blank?
+      - raise("#{current_user.id} must have a leaderbit to start") if current_user.first_leaderbit_to_start.blank?
+      - #NOTE: it is done as tiny form to make it submittable via js in specs
+      = form_tag challenges_begin_first_path, method: :post do
+        input.button.expanded.invisible#welcome-video-completed type="submit" value="Begin Your First Challenge"
+
+      = image_tag('arrow-up.png', class: 'arrow-up-img', id: 'welcome-arrow-up-img')
+    - else
+      - next_step_path = onboaring_steps_to_paths.fetch(next_step)
+      - #NOTE: it is done as tiny form to make it submittable via js in specs
+      = form_tag next_step_path, method: :get do
+        input.button.expanded.invisible#welcome-video-completed type="submit" value=onboaring_steps_to_titles.fetch(next_step)
+
+      = image_tag('arrow-up.png', class: 'arrow-up-img', id: 'welcome-arrow-up-img')

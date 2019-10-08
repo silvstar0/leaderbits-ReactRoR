@@ -1,0 +1,35 @@
+- content_for(:page_title, 'Admin : Surveys')
+.row.full-width
+  .medium-6.columns
+    h1 Surveys
+
+.row.full-width
+  .large-12.columns
+    table.index width="100%"
+      thead
+        tr
+          th= order_by_link 'Title', 'surveys.title'
+          th Anonymous Survey Role
+          th Questions Count
+          th
+
+      tbody
+        - @surveys.sort_by { |survey| - survey.questions.count }.each do |survey|
+          tr
+            td= survey.title
+            td= survey.anonymous_survey_participant_role
+            td= survey.questions.count
+            td.text-center.action
+              ul.button-group.actions.even
+                - if policy([:admin, survey]).show?
+                  li
+                    = link_to [:admin, survey], title: 'View', class: 'button info', style: 'text-align: left' do
+                      = fa_icon 'eye'
+                      | &nbsp; View
+
+                - if policy([:admin, survey]).edit?
+                  li
+                    = link_to [:edit, :admin, survey], title: 'Edit', class: 'button secondary', style: 'text-align: left' do
+                      = fa_icon 'edit'
+                      | &nbsp; Edit
+

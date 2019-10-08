@@ -1,0 +1,26 @@
+.small-12.columns
+  - last_iteration_date_was = nil
+  - @user_sent_emails.each do |user_sent_email|
+
+    .row style=(last_iteration_date_was.nil? ? 'border-top: 1px solid #333' : '')
+      .small-2 style=((last_iteration_date_was.nil? ? "padding-top: 10px;" : "") + "border-right: 1px solid #333; font-size: 13px")
+        .hide-for-small-only
+          span.date style=(last_iteration_date_was == user_sent_email.created_at.to_date ? 'visibility: hidden' : 'font-weight: 600') = user_sent_email.created_at.stamp('Dec 31')
+          span.time style='margin-left: 10px; padding-top: 3px' = user_sent_email.created_at.stamp('3:00 AM')
+
+        .show-for-small-only
+          div.date style=(last_iteration_date_was == user_sent_email.created_at.to_date ? 'visibility: hidden' : 'font-weight: 600') = user_sent_email.created_at.stamp('Dec 31')
+          div.time style='margin-left: 10px; padding-top: 3px' = user_sent_email.created_at.stamp('3:00 AM')
+      .small-10.columns style=(last_iteration_date_was.nil? ? "padding-top: 10px;" : "")
+        h4.timeline-status
+          span.c-event.c-event--opened.badge Delivered
+          - if params[:uuid].blank?
+            | &nbsp;
+            span.c-event.c-event--opened.success.badge = user_sent_email.user.name
+        p.timeline-item-subj
+          = user_sent_email_to_s user_sent_email
+    - last_iteration_date_was = user_sent_email.created_at.to_date
+
+.small-12 style="text-align: center"
+  = will_paginate @user_sent_emails
+  = "Total Entries: #{@user_sent_emails.total_entries}"

@@ -1,0 +1,9 @@
+p= "#{@progress_report_recipient.name},"
+
+p #{@user.first_name} is slacking off in the Leadership program. Normally we send you updates so that you can see the progress.
+
+p It's been 3 weeks since #{@user.first_name} has improved as a leader. We CC'd #{@user.first_name} on this email. Please discuss with #{@user.first_name} highlighting how important it is to improve as a leader.
+
+p Consistency is key, please encourage #{@user.first_name} to invest 10 minutes per week in order to grow as a leader.
+
+= leaderbot_footer_message

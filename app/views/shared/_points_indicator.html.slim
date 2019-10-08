@@ -1,0 +1,16 @@
+.row#progress-bar
+  .small-centered.large-7.small-12.columns style="display: flex; height: 67px"
+    .leaderbit-left-column
+      .digits
+        span.current-level #{current_level_num current_user}
+        span.total-levels
+          | /#{total_levels_count}
+      .footer.clearfix Level
+
+    .progress.columns role="progressbar" tabindex="0" aria-valuenow="#{current_level_percent_completed(current_user).to_i}" aria-valuemin="0" aria-valuetext="#{number_to_percentage current_level_percent_completed(current_user), precision: 0}" aria-valuemax="100"
+      .progress-meter style="width: #{number_to_percentage current_level_percent_completed(current_user), precision: 0}"
+
+  .small-centered.large-7.small-12.columns
+    .footer-text.clearfix
+      .float-left style="font-size: 110%" Keep going! #{number_to_percentage current_level_percent_completed(current_user), precision: 0} Almost to Level #{next_level_num current_user}
+      .float-right style="font-size: 110%" Total Points: #{current_user.total_points}

@@ -1,0 +1,51 @@
+- if user.schedule_id.present?
+  div style="margin-top: 0; padding-top: 0; margin-bottom: 10px"
+    h5 style="margin:0; padding: 0"
+      | Instant Queue:
+    h5 style="margin:0; padding: 0"
+      small
+        |
+                (if present it overrides regular/schedule queue)
+  table.index width="100%; border-spacing: 0; border-collapse: separate"
+    tbody#next_up_leaderbits data-update-url=sort_admin_user_preemptive_leaderbit_path(user.uuid) class='do-sortable'
+      - can_drag = @all_active_preemptive_leaderbits.size > 1 && policy([:admin, PreemptiveLeaderbit]).sort?
+      - @all_active_preemptive_leaderbits.each do |leaderbit|
+        = content_tag_for :tr, leaderbit, id: "leaderbit_#{leaderbit.id}", style: 'border: 1px solid #000' do
+          td style="text-align: center"
+            - if can_drag
+              span class="hide-for-small-only handle" style="cursor: pointer"
+                small
+                  | [drag]
+          td
+            span style="display: inline-block; width: 100px; padding: 1px"
+              = video_cover leaderbit
+          td style="text-align: center"
+            = link_to leaderbit.clean_name, [:admin, leaderbit]
+            div
+              - user_sent_scheduled_new_leaderbits = user.user_sent_scheduled_new_leaderbits.where(resource_id: leaderbit.id).order(created_at: :asc)
+              - if user_sent_scheduled_new_leaderbits.present?
+                table style="border-spacing: 0; border-collapse: separate; border: 0"
+                  - user_sent_scheduled_new_leaderbits.each do |user_sent_email|
+                    tr
+                      td style="text-align: center"
+                        a href=preview_path_for_user_sent_email(user_sent_email) Display
+                      td style="text-align: center"
+                        small
+                          time.timeago style="cursor: pointer" datetime=user_sent_email.created_at.getutc.iso8601 title="Received at: #{user_sent_email.created_at.in_time_zone(user.time_zone).strftime('%m/%d/%Y %I:%M:%S %Z')}"
+
+          td.text-center.action
+            - if policy([:admin, PreemptiveLeaderbit]).destroy_by_leaderbit_id?
+              = link_to 'X', destroy_by_leaderbit_id_admin_user_preemptive_leaderbits_path(user.uuid, leaderbit_id: leaderbit.id), method: :delete, data: { confirm: 'Are you sure?' }, style: 'color: red; font-weight: bold', title: 'Delete Instant Queue LeaderBit'
+
+- if user.schedule_id.present? && policy([:admin, PreemptiveLeaderbit]).create?
+  div
+    = simple_form_for 'leaderbit', url: admin_user_preemptive_leaderbits_path(user.uuid), method: 'post' do |f|
+      = f.input :id, as: :select, collection: user_accessible_leaderbits_for_preemptive_queue(user).pluck(:name, :id), label: false, input_html: { style: 'margin: 0; margin-bottom: 2px', id: Rails.configuration.add_to_next_up_select_dom_id }
+      = f.button :submit, class: 'hollow small expanded', value: 'Add to Instant Queue', data: { disable_with: 'Adding to Instant Queue...' }
+    div
+      p.text-center
+        small
+          | NOTE: Instant Queue puts user's regular schedule queue on pause until all LeaderBits from Instant Queue is sent, one by one. Send time is #{user.day_of_week_to_send}  #{user.hour_of_day_to_send}:00 #{user.time_zone} time zone.
+        br
+
+      hr

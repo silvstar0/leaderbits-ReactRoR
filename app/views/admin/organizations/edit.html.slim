@@ -1,0 +1,9 @@
+- content_for(:page_title, "Admin : Edit Account #{@organization.name}")
+
+.row.full-width
+  .medium-6.columns
+    h1= "Edit #{@organization.name} id: #{@organization.id}"
+
+.row.full-width
+  .large-10.large-offset-1.columns
+    = render 'form', account: @organization

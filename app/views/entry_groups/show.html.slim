@@ -1,0 +1,6 @@
+- content_for(:page_title, "#{@entry_group.leaderbit.name} Entry")
+
+.row
+  .small-12.medium-8.medium-centered.columns
+    = render 'shared/entry_group_show', entry_group: @entry_group
+    hr style="margin-top: 0"

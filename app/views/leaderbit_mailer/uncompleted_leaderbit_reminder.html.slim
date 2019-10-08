@@ -1,0 +1,17 @@
+p #{@user.first_name}, you haven’t finished the challenge:
+
+h2 #{@leaderbit.clean_name}
+
+p Complete this to grow as a leader and unlock new challenges!
+
+= simple_format @leaderbit.desc
+- token = @user.issue_new_authentication_token_and_return
+div
+  p
+    = link_to start_leaderbit_url(@leaderbit, user_email: @user.email, user_token: token) do
+      = video_cover @leaderbit
+
+p #{link_to '>> Watch LeaderBit <<', start_leaderbit_url(@leaderbit, user_email: @user.email, user_token: token)}
+
+small
+  = do_not_forward_email_footer_message

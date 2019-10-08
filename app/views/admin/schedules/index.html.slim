@@ -1,0 +1,57 @@
+- content_for(:page_title, 'Admin : Schedules')
+.row.full-width
+  .medium-6.columns
+    h1 Schedules
+  - if policy([:admin, Schedule]).new?
+    .medium-6.columns.text-right
+      = link_to [:new, :admin, :schedule], class: 'button success' do
+        = fa_icon 'plus-square'
+        | &nbsp; New Schedule
+
+.row.full-width
+  .large-12.columns
+    table.index width="100%"
+      thead
+        tr
+          th.text-center= order_by_link 'Name', 'schedules.name'
+          th.text-center Active Users Count
+          th.text-center LeaderBits Count
+          th
+
+      tbody
+        - @schedules.sort_by { |schedule| - schedule.users_count }.each do |schedule|
+          tr
+            td.text-center
+              = schedule.name
+              - if schedule.cloned_from_schedule_name.present?
+                br
+                small
+                  = "cloned from #{schedule.cloned_from_schedule_name} "
+
+            td.text-center= schedule.users.active_recipient.count
+            td.text-center= schedule.leaderbits.active.count
+            td.text-center.action
+              ul.button-group.actions.even
+                - if policy([:admin, schedule]).show?
+                  li
+                    = link_to [:admin, schedule], title: 'View', class: 'button info', style: 'text-align: left' do
+                      = fa_icon 'eye'
+                      | &nbsp; View
+
+                - if policy([:admin, schedule]).edit?
+                  li
+                    = link_to [:edit, :admin, schedule], title: 'Edit', class: 'button secondary', style: 'text-align: left' do
+                      = fa_icon 'edit'
+                      | &nbsp; Edit
+
+                - if policy([:admin, schedule]).clone?
+                  li
+                    = link_to clone_admin_schedule_path(schedule), remote: true, 'data-confirm': 'Are you sure?', method: 'post', class: 'button primary warning', style: 'text-align: left' do
+                      = fa_icon 'clone'
+                      | &nbsp; Clone
+
+                - if policy([:admin, schedule]).destroy?
+                  li
+                    = link_to [:admin, schedule], method: :delete, 'data-confirm': 'Are you sure?', class: 'button alert', style: 'text-align: left' do
+                      = fa_icon 'remove'
+                      | &nbsp;Destroy

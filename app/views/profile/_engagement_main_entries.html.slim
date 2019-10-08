@@ -1,0 +1,7 @@
+.small-12
+  - @entry_groups.each do |entry_group|
+    = render 'shared/entry_group_show', entry_group: entry_group
+
+.small-12 style="text-align: center"
+  = will_paginate @entry_groups
+  = "Total Entries: #{@entry_groups.total_entries}"

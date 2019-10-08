@@ -1,0 +1,10 @@
+- if user.schedule_id.present?
+  div style="margin-top: 0; padding-top: 0; margin-bottom: 10px"
+    h5.text-center style="margin:0; padding: 0"
+      | Schedule LeaderBits:&nbsp;
+      strong = user.schedule.name
+  table.index width="100%" style="border-spacing: 0; border-collapse: separate"
+    tbody#schedule_leaderbits
+      - lookup_positions =  @user.schedule.leaderbit_schedules
+      - @all_active_leaderbits_from_schedule.each do |leaderbit|
+        = render 'leaderbit_with_related_info', leaderbit: leaderbit, lookup_positions: lookup_positions, position_suffix: ''

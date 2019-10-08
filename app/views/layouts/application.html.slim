@@ -1,0 +1,16 @@
+doctype html
+html lang="en"
+  head
+    = render 'shared/common_head'
+
+  body class=extended_body_class
+    .row.full
+      .small-12.medium-12.columns.top-header-section
+        = render 'shared/application_nav'
+
+    = render 'shared/points_indicator' if display_points_indicator?
+
+    #flash-achievement-container
+
+    == yield
+    = javascript_tag yield(:javascript)

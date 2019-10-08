@@ -1,0 +1,23 @@
+fieldset.decorated style="color: ##cde0ef"
+  legend style="padding: 0px 7px" = title.upcase
+
+div
+  p style="margin: 16px 0 23px 0; vertical-align: middle; text-align: center"
+    - if defined?(image_src)
+      img[border="0" vspace="0" hspace="0" src="#{image_src}" width="20" height="20" alt="" title="" style="vertical-align: middle; color: #FFFFFF; font-size: 10px; margin: 5px; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none;"]
+    font[style="font-size: 15px; font-weight: bold; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: 0.02px; color: #{message_color};"]
+      = message
+hr style="border: 0; background-color: #cde0ef; height: 1px"
+
+/ h2.decorated style="color: ##cde0ef"
+/   span = title.upcase
+/
+/ div style="width: 90%; margin: 0 auto"
+/   p style="vertical-align: middle; text-align: center"
+/     - if defined?(image_src)
+/       img[border="0" vspace="0" hspace="0" src="#{image_src}" width="20" height="20" alt="" title="" style="vertical-align: middle; color: #FFFFFF; font-size: 10px; margin: 5px; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none;"]
+/     font[style="font-size: 15px; font-weight: bold; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: 0.02px; color: #{message_color};"]
+/       = message
+/ /hr style="border: 0; background-color: #cde0ef; height: 1px"
+/
+/ div style="width: 90%; height: 1px; background-color: #cde0ef; margin: 0 auto"

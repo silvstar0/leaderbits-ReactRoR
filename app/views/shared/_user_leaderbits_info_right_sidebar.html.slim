@@ -1,0 +1,28 @@
+- if user.active_scheduled_leaderbits_receiver?
+  - leaderbit = user.next_leaderbit_to_send
+  - if leaderbit.present?
+    - send_at = user.next_leaderbit_to_be_sent_at.stamp('Mon 29 Sep 23:59')
+
+    div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); -o-transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%);"
+      h4.text-center style="margin-bottom: 0" Next LeaderBit
+      .hide-for-small-only.text-center
+        div style="width: 200px; margin: 0 auto"
+          = video_cover leaderbit
+        div
+          = leaderbit.name.gsub('Challenge: ', '')
+        div style="margin-top: 4px; vertical-align: middle"
+          | at&nbsp;
+          = send_at
+          = link_to 'Trigger Instant Send', trigger_next_leaderbit_instant_sending_admin_user_path(user), class: 'button alert small hollow', style: 'margin: 0 0 4px 5px', data: { confirm: 'Are you sure you want to trigger instant send for upcoming LeaderBit without waiting for the scheduled send time?', method: :post }
+
+      - # do not deleted, needed for verification in Capybara
+      div style="display: none"
+        | Next LeaderBit to receive: #{leaderbit.name}
+
+      .show-for-small-only
+        div Next LeaderBit:
+        div style="width: 123px"
+          = video_cover leaderbit
+        div
+          | at #{send_at}
+

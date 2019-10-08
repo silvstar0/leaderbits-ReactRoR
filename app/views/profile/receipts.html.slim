@@ -1,0 +1,14 @@
+- content_for(:page_title, 'Receipts')
+
+.row
+  .small-12.medium-10.medium-centered.columns
+    h3 Receipts
+
+    - @charges.each do |charge|
+      div style="background-color: #{EntryReply::Colors::GREY}"
+        .content.small-12
+          p Number: #{charge.receipt_number}
+          p Status: #{charge.status}
+          p Amount: #{number_to_currency (charge.amount / 100.0), precision: 1}
+          p = link_to 'Download', charge.receipt_url
+        time.timeago datetime=Time.at(charge.created).getutc.iso8601

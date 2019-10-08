@@ -1,0 +1,31 @@
+#admin-nav-container style='margin-bottom: 0; border-bottom: 1px dotted #000'
+  .top-bar.leaderbits-menu style=(Rails.env.production? ? 'background-color: #FFE8E8' : '')
+    .top-bar-right
+      ul.menu style="background-color: transparent"
+        li
+          - if current_user.system_admin?
+            li.hide-for-small-only
+              = link_to "Dashboard", admin_dashboard_path
+            li.hide-for-small-only
+              span style="display: block; height: 34px; width: 2px; background-color: #ccc"
+        li
+          = link_to "Accounts", [:admin, :organizations]
+        - if Admin::AuditPolicy.new(current_user, Audited::Audit.all.sample).index?
+          li
+            = link_to audit_menu_title, [:admin, :audits]
+        li
+          = link_to "LeaderBits", [:admin, :leaderbits]
+        li.hide-for-small-only
+          = link_to "Report", admin_report_path
+        li
+          = link_to "Schedules", [:admin, :schedules]
+        li
+          = link_to "Surveys", [:admin, :surveys]
+        li
+          = link_to "Tags", [:admin, :tags]
+        - # because link name conflicts with other Teams nav item - fix it eventually TODO
+        - unless Rails.env.test?
+          li
+            = link_to "Teams", [:admin, :teams]
+        li
+          = link_to "Users", [:admin, :users]

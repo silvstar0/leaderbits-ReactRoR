@@ -1,0 +1,11 @@
+- content_for(:page_title, "Admin : Edit Tag #{@tag.label}")
+
+.row.full-width
+  .large-10.large-offset-1.columns
+    = simple_form_for [:admin, @tag], url: admin_tag_path(@tag.label), method: 'put' do |f|
+      = f.input :label, required: true
+
+      div style="height: 15px"
+
+      = f.submit 'Rename Tag', class: "button"
+

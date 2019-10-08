@@ -1,0 +1,38 @@
+.row
+  .small-12.columns
+    h1 style="text-align: center" All challenges
+    /p style="text-align: center" All accessible challenges.
+    hr
+    - @leaderbits.each do |leaderbit|
+      .row
+        .small-12.medium-8.columns.medium-centered
+          .row
+            .small-12.medium-4.columns
+              = link_to leaderbit do
+                = video_cover leaderbit
+              - found = @completed_leaderbit_log_data.detect { |leaderbit_id, completed_at| leaderbit.id == leaderbit_id }
+              - if found.present?
+                div.text-center
+                  small
+                    | ✓ Completed&nbsp;
+                    time.timeago datetime=found.last.getutc.iso8601
+            .small-12.medium-8.columns.medium-centered
+              h4
+                = leaderbit.name
+              #full-content
+                = raw simple_format(leaderbit.desc, style: 'margin-bottom: 5px')
+              - if policy(leaderbit).start?
+                .show-for-small-only
+                  .text-center
+                    = link_to "Start LeaderBit", start_leaderbit_path(leaderbit), class: "button success"
+                .hide-for-small-only
+                  = link_to "Start LeaderBit", start_leaderbit_path(leaderbit), class: "button success"
+              - else
+                .show-for-small-only
+                  .text-center
+                    = link_to "View LeaderBit", leaderbit_path(leaderbit), class: "button success"
+                .hide-for-small-only
+                  = link_to "View LeaderBit", leaderbit_path(leaderbit), class: "button success"
+      div style="height: 20px"
+
+

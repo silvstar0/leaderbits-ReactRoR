@@ -1,0 +1,31 @@
+{
+  "name": "Leader",
+  "private": true,
+  "dependencies": {
+    "@rails/webpacker": "3.5",
+    "@wojtekmaj/react-daterange-picker": "^2.0.1",
+    "babel-preset-react": "^6.24.1",
+    "prop-types": "^15.6.2",
+    "react": "^16.4.2",
+    "react-addons-test-utils": "^15.6.2",
+    "react-dom": "^16.4.2",
+    "react-linkify": "^0.2.2",
+    "react-select": "^2.2.0",
+    "react_ujs": "^2.4.4"
+  },
+  "devDependencies": {
+    "babel-jest": "^22.1.0",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0",
+    "babel-preset-env": "^1.7.0",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "jest": "^22.1.1",
+    "jest-enzyme": "^4.0.2",
+    "regenerator-runtime": "^0.11.1",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "scripts": {
+    "test": "jest",
+    "test-watch": "jest --watch"
+  }
+}

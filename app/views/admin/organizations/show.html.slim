@@ -1,0 +1,225 @@
+- content_for(:page_title, "Admin : Accounts : #{@organization.name}")
+
+.row.full-width
+  .medium-5.columns
+    h1= "#{@organization.name}"
+  .medium-7.columns.text-right
+    - if policy(@organization).preview_organization_engagement_as_admin?
+      = link_to profile_engagement_path(Rails.configuration.preview_organization_engagement_as_admin => @organization.id), class: 'button hollow success' do
+        = fa_icon 'bar-chart'
+        | &nbsp; Engagement Report
+    - if policy([:admin, User]).new?
+      = link_to new_admin_user_path(organization_id: @organization.id), class: 'button success' do
+        = fa_icon 'plus-square'
+        | &nbsp; New User
+    - if policy([:admin, @organization]).edit?
+      = link_to [:edit, :admin, @organization], class: 'button' do
+        = fa_icon 'edit'
+        | &nbsp; Edit
+
+    - if policy([:admin,  @organization]).send_lifetime_progress_report?
+      li style="list-style-type: none; display: inline"
+
+      .reveal#exampleModal1 data-reveal=''
+        p.lead
+          = "#{@organization.name} Lifetime Progress Report"
+          = raw "<small>(#{pluralize(@organization.lifetime_completed_leaderbit_logs.count, 'records')})</small>"
+
+        div
+          = form_tag [:send_lifetime_progress_report, :admin, @organization], method: :post do
+            label for="email" Recipient Email
+            = email_field_tag 'recipient_email', '', required: true
+
+            .small-12
+              = submit_tag 'Send Report', class: 'button primary'
+
+        button.close-button data-close='' aria-label="Close modal" type="button"
+          span aria-hidden="true" &times;
+
+      a.button.secondary data-open="exampleModal1"
+        = fa_icon 'envelope-open'
+        |&nbsp; Send Lifetime Progress Report
+
+    - if policy([:admin, @organization]).destroy?
+      = link_to [:admin, @organization], method: :delete, class: 'button alert', data: { confirm: 'Are you sure?' } do
+        = fa_icon 'remove'
+        | &nbsp; Delete
+
+.row
+  .small-6.columns
+    = render 'shared/admin/attributes_table', model: @organization,
+            attributes: [:logo,
+                    :leaderbits_sending_enabled,
+                    :active_since,
+                    :day_of_week_to_send,
+                    :hour_of_day_to_send,
+                    :stripe_customer_id,
+                    :account_type]
+
+  .small-6.columns
+    div.columns style="border: 1px solid #f1f1f1; padding-top: 10px; min-height: 233px"
+      div style="min-height: 42px"
+        h5 style="display: inline-block"
+          = activity_date_range(@organization).first.stamp('Dec 31 2019')
+          | &nbsp;–&nbsp;
+          = activity_date_range(@organization).last.stamp('Dec 31 2019')
+
+        = form_tag admin_organization_path(@organization), method: 'get', style: 'display: inline-block', class: 'float-right' do |f|
+          = select_tag "period", period_options, include_blank: false, style: 'margin-bottom: 0', onchange: "this.closest('form').submit()"
+
+      h4.text-center style="display: block"
+        | How many people were active?
+
+      - date_range = activity_date_range(@organization)
+      - @since_at = date_range.first
+      - @until_at = date_range.last
+      - activity_chart = OrganizationEngagementReport.new since_at: @since_at, until_at: @until_at, organization: @organization
+      - if activity_chart.display?
+
+        - if activity_chart.highly_active_users_label.present?
+          div style="border: 1px solid lightgray"
+            div style="background: #2275d7; height: 10px; width: #{activity_chart.highly_active_users_perc}%"
+          = raw activity_chart.highly_active_users_label
+
+        - if activity_chart.active_users_label.present?
+          div style="margin: 15px 0 ;"
+            div style="border: 1px solid lightgray"
+              div style="background: #4a90e2; height: 10px; width: #{activity_chart.active_users_perc}%;"
+            = raw activity_chart.active_users_label
+
+        - if activity_chart.not_active_users_label.present?
+          div style="border: 1px solid lightgray"
+            div style="background: #76abe9; height: 10px; width: #{activity_chart.not_active_users_perc}%"
+          = raw activity_chart.not_active_users_label
+
+      - else
+        p No data is available for the selected period.
+.row.full-width
+  .large-12.columns
+    h3 Users
+    table.stack width="100%"
+      tbody
+        - @organization.users.order(name: :asc).includes(:schedule).collect { |u| Admin::UserDecorator.new(u) }.each do |user|
+          tr
+            td style="vertical-align: top; width: 25%"
+              strong
+                | Name
+              br
+                small = link_to user.name, [:admin, user]
+              br
+
+              strong
+                | Email
+              br
+                small = link_to user.email, [:admin, user]
+
+              br
+              - if user.discarded_at.present?
+                strong style="color: darkred"
+                  | Discarded
+                br
+                  small = link_to [:admin, user], style: 'color: darkred' do
+                    time.timeago datetime=user.discarded_at.getutc.iso8601
+              - else
+                strong
+                  | Created
+                br
+                  small = link_to [:admin, user] do
+                    time.timeago datetime=user.created_at.getutc.iso8601
+
+                  - if user.created_by_user.present?
+                    | &nbsp;
+                    font style="color: rgb(109, 109, 109)" by&nbsp;
+                    = link_to user.created_by_user.name, [:admin, user.created_by_user], style: "text-decoration: underline"
+            td style="vertical-align: top; width: 25%"
+              - #TODO-High very poor performance, temporary solution until this workflows is confirmed
+              - if User.active_recipient.where(id: user.id).present?
+                strong
+                  | Status
+                br
+                  small = user.activity_type(@since_at, @until_at).to_s.titleize
+                br
+                strong
+                  | Momentum
+                br
+                  small = number_to_percentage user.momentum, precision: 0
+                br
+                strong
+                  | Challenges sent(all time)
+                br
+                  small
+                    = link_to admin_leaderbits_path(leaderbit_ids: user.received_uniq_leaderbit_ids.join(',')) do
+                      = fa_icon 'external-link'
+                      | &nbsp;
+                      = user.received_uniq_leaderbit_ids.count
+                br
+                strong
+                  | Challenges completed(all time)
+                br
+                  - completed = LeaderbitLog.completed.where(user: user)
+                  small
+                    = link_to admin_leaderbits_path(leaderbit_ids: completed.collect(&:leaderbit_id).join(',')) do
+                      = fa_icon 'external-link'
+                      | &nbsp;
+                      = completed.count
+
+            td style="vertical-align: top; width: 25%"
+              - if user.leaderbits_sending_enabled?
+                strong
+                  | Schedule
+                br
+                  small = user.schedule&.name || '*none*'
+                br
+              strong
+                | Sending LeaderBits:&nbsp;
+
+              font
+                = raw attribute_value(user, :leaderbits_sending_enabled)
+              - if user.leaderbits_sending_enabled?
+                small
+                  | (
+                  = user.day_of_week_to_send
+                  | &nbsp;at&nbsp;
+                  = user.hour_of_day_to_send
+                  | &nbsp;
+                  = user.time_zone.gsub('(US & Canada)', '')
+                  |)
+              br
+              br
+
+              strong
+                | Roles:
+              br
+                small = user.humanized_roles
+
+            td style="vertical-align: top; width: 25%"
+              strong
+                | Onboarding
+              br
+              table.unstriped
+                tbody style="border: 1px solid lightgrey"
+                  tr
+                    td
+                      small= humanized_attribute_label :leader_welcome_video_onboarding_step
+                    td
+                      strong = user.goes_through_leader_welcome_video_onboarding_step ? "Yes" : "No"
+
+
+                  tr
+                    td
+                      small= humanized_attribute_label :leader_strength_finder_onboarding_step
+                    td
+                      strong = user.goes_through_leader_strength_finder_onboarding_step ? "Yes" : "No"
+
+                  tr
+                    td
+                      small= humanized_attribute_label :team_survey_360_onboarding_step
+                    td
+                      strong = user.goes_through_team_survey_360_onboarding_step ? "Yes" : "No"
+
+                  tr
+                    td
+                      small= humanized_attribute_label :mentorship_onboarding_step
+
+                    td
+                      strong = user.goes_through_organizational_mentorship_onboarding_step ? "Yes" : "No"

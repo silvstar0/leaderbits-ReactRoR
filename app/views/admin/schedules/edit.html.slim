@@ -1,0 +1,9 @@
+- content_for(:page_title, "Admin : Edit Schedule #{@schedule.name}")
+
+.row.full-width
+  .medium-6.columns
+    h1= "Edit #{@schedule.name} id: #{@schedule.id}"
+
+.row.full-width
+  .large-10.large-offset-1.columns
+    = render 'form', schedule: @schedule

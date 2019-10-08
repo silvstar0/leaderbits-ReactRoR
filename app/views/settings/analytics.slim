@@ -1,0 +1,65 @@
+- content_for(:page_title, 'Analytics')
+
+- @user = current_user
+
+.row.header
+  .background.small-centered.small-12.columns
+    svg version="1.1" viewbox=("0 0 169 96") xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+      g#Desktop fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"
+        g#iPhone-X---Community-Copy fill="#FFFFFF" transform="translate(-98.000000, -121.000000)"
+          g#fi-graph-trend transform="translate(61.000000, 76.000000)"
+            g#Group
+              path#Shape d="M95.2595147,140.039586 C92.4618474,140.039586 89.7698094,138.920966 87.7719068,136.928611 L72.9958777,122.123515 L55.008718,137.034427 C50.4817483,140.789364 43.8180489,140.130285 40.0938618,135.625569 C36.3696747,131.105737 36.9974145,124.409129 41.5002404,120.687448 L66.9237023,99.6180761 C71.1307661,96.1231422 77.2874449,96.413379 81.165549,100.292272 L93.4547628,112.612216 L120.553203,70.3192837 C122.63561,67.0843535 126.208898,65.2159546 130.153397,65.4759584 C133.992268,65.7238689 137.396549,68.0336695 139.041348,71.5286033 L155.033623,105.407694 L185.913592,51.012495 C188.810853,45.909166 195.266312,44.1616991 200.360662,47.0277867 C205.439922,49.9392238 207.22053,56.4060608 204.329305,61.5093898 L163.372301,133.651355 C161.422686,137.0828 157.635121,139.15376 153.766071,138.999571 C149.812518,138.8605 146.278463,136.517443 144.588395,132.928787 L128.052883,97.8857257 L104.168591,135.150911 C102.439289,137.862811 99.5782438,139.625394 96.3912571,139.97912 C96.0170276,140.009353 95.6337442,140.039586 95.2595147,140.039586 L95.2595147,140.039586 Z"
+
+  .text.medium-5 Analytics
+
+.row
+  .small-centered.small-12.columns
+    p.message
+      | Your analytics show you your progress over time.
+      br
+      | Watch your momentum to get point multipliers.
+    br
+    br
+
+    .row data-equalizer=0
+      - if @user.points.collect { |p| p.created_at.to_date }.uniq.count < 2
+        - #centering SPACER
+        .medium-3.columns
+
+      .small-12.columns style="display: flex; flex-direction: column" data-equalizer-watch=0 class=(@user.points.collect { |p| p.created_at.to_date }.uniq.count >= 2 ? 'medium-9' : 'medium-3')
+        div
+          h4 Points
+          - if @user.points.collect { |p| p.created_at.to_date }.uniq.count >= 2
+            .chartist-points-over-time-container
+            - add_javascript_content_for_line_chart placeholder_selector: '.chartist-points-over-time-container', data: points_over_time(@user), height: '250px'
+          - else
+            .chartist-points-over-time-container.chartist-chart-with-text
+              - value = @user.points.sum(:value)
+              font = value
+            - add_javascript_content_for_raw_metric placeholder_selector: '.chartist-points-over-time-container', value: value, donut_width: 8, height: '413px'
+
+          .show-for-small-only
+            hr
+
+        - if @user.momentum_historic_values.count >= 2
+          - # otherwise "Current Momentum" is enough
+          br
+          div
+            h4 Engagement
+            .chartist-momentum-over-time-container
+            - add_javascript_content_for_line_chart placeholder_selector: '.chartist-momentum-over-time-container', data: momentum_over_time(@user), height: '250px'
+
+      .small-12.medium-3.columns data-equalizer-watch=0
+        h4 style="text-align: center; display: block;" Current Momentum
+        .chartist-current-momentum-container.chartist-chart-with-text
+          font
+            | #{number_to_percentage @user.momentum, precision: 0}
+        - add_javascript_content_for_current_momentum user: @user, donut_width: 8, height: '413px'
+    br
+    br
+
+    p.message
+      | The higher your momentum the greater your point multiplier is for challenges.
+      br
+      | Complete challenges back-to-back without missing a week to receive a higher momentum.

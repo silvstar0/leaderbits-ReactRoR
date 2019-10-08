@@ -1,0 +1,21 @@
+- if @user_received_leaderbit_ids.size.zero?
+  - if @user.organization.first_leaderbit_introduction_message.present?
+    p = simple_format(@user.organization.first_leaderbit_introduction_message)
+    hr
+  p Your first LeaderBit challenge has arrived!
+- else
+  p Your latest LeaderBit challenge has arrived!
+
+h2 #{@leaderbit.name.gsub('Challenge: ', '')}
+
+= simple_format @leaderbit.desc
+- token = @user.issue_new_authentication_token_and_return
+div
+  p
+    = link_to start_leaderbit_url(@leaderbit, user_email: @user.email, user_token: token) do
+      = video_cover @leaderbit
+
+p #{link_to '>> Watch LeaderBit <<', start_leaderbit_url(@leaderbit, user_email: @user.email, user_token: token)}
+
+small
+  = do_not_forward_email_footer_message

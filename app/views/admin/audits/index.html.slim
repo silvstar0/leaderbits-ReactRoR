@@ -1,0 +1,39 @@
+- content_for(:page_title, 'Audit')
+
+.row
+  .small-12.medium-centered.columns
+    small NOTE: This page is only visible by system admins. Here at the moment it displays only user hard-destroying log audit. This is needed for transparency and ease of use in case we need to debug something in the future.
+
+    table.stack.striped
+      thead
+        tr
+          th Actor
+          th Action
+          th Changes
+          th Time
+      tbody
+        - @audits.each do |audit|
+          tr
+            td = audit.user.name
+            td
+              - if audit.auditable_type == 'UserSentEmail'
+                = auditable_sti_tolerant_type(audit)
+              - else
+                = %(#{audit.auditable_type}(##{audit.auditable_id}))
+              div
+                strong
+                  | #
+                  = audit.action
+            td
+              div style="max-width: 550px; overflow-x: scroll"
+                small
+                  pre
+                    = JSON.pretty_generate audit.audited_changes
+            td
+              time.timeago datetime=audit.created_at.getutc.iso8601
+
+.row
+  .small-12.medium-8.medium-centered.columns.text-center
+    = will_paginate @audits
+    = "Total Entries: #{@audits.total_entries}"
+

@@ -1,0 +1,25 @@
+.row
+  .small-12.medium-8.medium-centered.columns.reflectdb
+    h4.text-center List of Replies
+    - @entry_replies.each do |entry_reply|
+      .entry-item style=("width: 100%")
+        .small-12.columns.medium-centered style=("margin-bottom: 15px")
+          div style=("background-color: #f2f2f2")
+            .content style=("overflow-x: hidden")
+              div
+                p.text-left style=("float: left")
+                  strong Joel Beasley
+                  / strong
+                  /   a href="/users/a64b318"  Darin Grant @ Animal Logic
+              div style=("clear: both")
+                = simple_format entry_reply.content
+            .footer.text-left style=("display: block; clear: both")
+              .info style=("height: auto; padding-left: 0; width: 100%")
+                a href=entry_group_path(entry_reply.entry.entry_group.to_param)
+                  time.timeago datetime=entry_reply.created_at.getutc.iso8601
+          .clearfix
+
+.row.full-width
+  .large-12.columns.text-center style="margin: 15px 0"
+    = will_paginate @entry_replies
+    = "Total Entries: #{@entry_replies.total_entries}"

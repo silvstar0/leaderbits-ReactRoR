@@ -1,0 +1,16 @@
+meta charset="utf-8"
+meta name="viewport" content="width=device-width, initial-scale=1.0"
+title= page_title app_name: app_name, reverse: 1
+
+= stylesheet_link_tag "application", media: 'all'
+= csrf_meta_tag
+/meta data-turbolinks-track="true" name="tracking-token" content=Time.now.to_i
+= csp_meta_tag
+= action_cable_meta_tag
+
+= Gon::Base.render_data
+// TODO is there a simple way to move this to babel config instead?
+script src="https://polyfill.io/v3/polyfill.js?features=default,es5,es6,fetch&flags=gated"
+= javascript_pack_tag "application"
+= javascript_include_tag "application_legacy"
+link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400" rel="stylesheet"

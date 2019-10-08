@@ -1,0 +1,108 @@
+- content_for(:page_title, 'Company')
+
+.row
+  .small-12.columns#my-unique-id data-tg-refresh="dynamic-list-container"
+    h3.text-center = current_user.organization.name
+    - if params[:new].blank? && params[:edit].blank? && policy(Team).create?
+      .text-center
+        p style="text-decoration: underline"= link_to "Add New Team", new_team_path, class: 'button hollow'
+
+    - users = current_user.can_see_users_in_organization_without_teams.sort_by(&:name)
+    - if params[:new].blank? && params[:edit].blank? && users.present?
+      h4.text-center
+        | Here's everyone without a team
+
+      table.table.unstriped style="margin-bottom: 0"
+        thead style="background-color: transparent"
+          tr
+            th.text-center Name
+            th.text-center Email
+            th.text-center Role
+
+        tbody style="background-color: transparent"
+          - users.each do |user|
+            tr style="background-color: transparent"
+              td.text-center
+                = link_to user.name, user, style: "text-decoration: underline"
+
+              td.text-center
+                = user.email
+
+              td.text-center
+                = user.c_level? ? 'C-Level' : ''
+      br
+      br
+
+    - count = @teams.count
+    - if params[:new].blank? && params[:edit].blank? && count.positive?
+      h4.text-center
+        | Here's everyone at your #{"team".pluralize(count)}
+
+      - @teams.each do |team|
+        - if policy(team).update?
+          h3.text-center style="margin: 0" = link_to team.name, edit_team_path(team)
+        - else
+          h3.text-center style="margin: 0"
+            a = team.name
+
+        div.text-center style="margin-bottom: 15px"
+          - if policy(team).create_team_member?
+            = link_to "Add New Person", {controller_name: controller_name, action_name: action_name, new: 1, team_id: team.id}, 'data-tg-refresh-on-success' => 'dynamic-list-container dynamic-list-container-footer', 'data-tg-remote' => 'get', 'data-tg-refresh-on-error' => "dynamic-list-container dynamic-list-container-footer", style: "text-decoration: underline"
+
+        - team_members = TeamMember.includes(:user).where(team: team).sort_by { |tm| tm.user.name }
+        - if team_members.present?
+          table.table.unstriped style="margin-bottom: 0"
+            thead style="background-color: transparent"
+              tr
+                th.text-center Name
+                th.text-center Email
+                th.text-center Role
+
+            tbody style="background-color: transparent"
+              - team_members.each do |tm|
+                - user = tm.user
+
+                tr style="background-color: transparent"
+                  td.text-center
+                    - if policy(tm).update?
+                      = link_to user.name, {controller_name: controller_name, action_name: action_name, edit: tm.id}, 'data-tg-refresh-on-success' => 'dynamic-list-container dynamic-list-container-footer', 'data-tg-remote' => 'get', 'data-tg-refresh-on-error' => "dynamic-list-container dynamic-list-container-footer", style: "text-decoration: underline"
+                    - else
+                      a = user.name
+
+                  td.text-center
+                    = user.email
+
+                  td.text-center
+                    = tm.role.capitalize
+        div style="height: 15px"
+      br
+      br
+
+    - if params[:new].present?
+      h3.text-center= link_to @team.name, edit_team_path(@team)
+      h4.text-center Add team member
+      div.text-left
+
+      - users = @team.users_who_can_be_added.sort_by(&:name)
+      - if users.present?
+        .small-7.small-centered
+          - last_person = users.last
+          - users.each do |user|
+            .card style="background-color: #50e3c2; padding: 15px"
+              table style="border: 0;"
+                tbody style="background: none; border: 0"
+                  tr
+                    td style="white-space: nowrap"
+                      input type="radio" name="team-member-selector" id="radio#{user.id}" style="margin: 0" onClick="document.getElementById('team_member_user_attributes_name').value = #{user.name.to_json} ; document.getElementById('team_member_user_attributes_email').value = #{user.email.to_json} ; var e = document.querySelector('input[type=submit]') ; e.classList.remove('disabled') ; e.removeAttribute('disabled')"
+                    td style="width: 99%"
+                      label for="radio#{user.id}" style="font-size: 18px" onClick="document.getElementById('team_member_user_attributes_name').value = #{user.name.to_json} ; document.getElementById('team_member_user_attributes_email').value = #{user.email.to_json} ; var e = document.querySelector('input[type=submit]') ; e.classList.remove('disabled') ; e.removeAttribute('disabled')"
+                        = user.name
+
+        .small-7.small-centered
+          = render file: 'team_members/new'
+
+    - if params[:edit].present?
+      h4.text-center
+        | Edit #{@team_member.user.name} in&nbsp;
+        = link_to @team.name, edit_team_path(@team)
+      = render file: 'team_members/edit'

@@ -1,0 +1,27 @@
+= simple_form_for [entry.leaderbit, entry], html: {class: "entry-form custom"}, remote: true do |f|
+  = f.input :content, label: false, placeholder: "Make an entry into the ReflectDB...", input_html: { cols: 40, rows: 6, class: (entry.persisted? ? 'edit_entry' : 'new_entry')}
+
+  .actions
+
+    div.input.tags style="margin-bottom: 20px"
+      label for="entry_boomerang" style="font-size: 16px; font-weight: 500" Entry Visible To
+      div
+        = react_component('EntryVisibilitySelector', allLabels: all_labels, selectedLabels: selected_labels(entry))
+    div
+      label for="entry_boomerang" style="font-size: 16px; font-weight: 500" Boomerang
+
+    div data-equalizer=0
+      .hide-for-small-only data-equalizer-watch=0
+        = f.button :submit, class: "primary float-right", data: {disable_with: "Saving..."}
+      .show-for-small-only data-equalizer-watch=0
+        = f.button :submit, class: "primary small float-right", data: {disable_with: "Saving...."}, style: 'font-size: 0.9rem'
+
+= simple_form_for 'boomerang', url: leaderbit_boomerangs_path(entry.leaderbit), method: 'post', remote: true do |f2|
+  div data-equalizer-watch=0
+    = f2.input :type, as: :select, collection: boomerang_options, selected: default_selected_boomerang_value(entry), label: false, include_blank: false, input_html: { style: 'margin: 0', onchange: "Rails.fire(this.closest('form'), 'submit')" }
+
+  - unless request.xhr?
+    div style="font-style: italic; text-align: center; margin: 25px 0 20px 0"
+      | We’ll remind you of your hard work completing this challenge in the future.
+      br style="height: 10px"
+      | You won’t have to do anything except feel proud of your progress when you see the reminder come through your email.

@@ -1,0 +1,11 @@
+= simple_form_for user, url: url, html: {class: "custom edit_user", novalidate: false} do |f|
+  = f.input :name, required: true
+  = f.input :email, required: true, autocomplete: "email"
+
+  - if user.leaderbits_sending_enabled?
+    = f.input :time_zone, priority: /US/
+
+    = f.input :day_of_week_to_send, collection: Date::DAYNAMES, include_blank: false
+    = f.input :hour_of_day_to_send, collection: 0..23, include_blank: false
+
+  = f.submit "Save", class: "button expanded"

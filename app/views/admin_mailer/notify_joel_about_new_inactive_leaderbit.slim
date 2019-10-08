@@ -1,0 +1,21 @@
+p Hi Joel,
+p new LeaderBit created by #{@created_by.name} need approvement before it becomes active.
+p #{link_to '>> Review & Approve <<', edit_admin_leaderbit_url(@leaderbit)}
+
+p Below is its preview(please note auto-sign links have been purposely disabled):
+
+hr style="color: grey; width: 100%; height: 1px"
+
+p Your latest LeaderBit challenge has arrived!
+h2 #{@leaderbit.name}
+
+= simple_format @leaderbit.desc
+p
+  a
+    = video_cover @leaderbit
+
+p
+  a href="" >> Watch LeaderBit <<
+
+small
+  = do_not_forward_email_footer_message

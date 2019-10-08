@@ -1,0 +1,55 @@
+@import 'settings';
+
+
+body.landing_pages {
+  p.title {
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  #nav-container {
+    margin-bottom: 30px;
+  }
+}
+
+.welcome_custom {
+  .welcome-text {
+    color: #808080;
+    font-size: 24px;
+    margin: 30px 0 0;
+  }
+
+  video {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  a#begin_first_challenge {
+    float: right;
+    margin-top: 0;
+  }
+
+  .arrow-up-img {
+    clear: both;
+    display: block;
+    margin: 0 auto;
+    padding: 1rem;
+    position: relative;
+    top: -85px;
+    width: 120px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .welcome_custom {
+    .welcome-text {
+      font-size: 18px;
+      margin: 0;
+    }
+  }
+}
+
+.slider {
+  margin-top: 0;
+}

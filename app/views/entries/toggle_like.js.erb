@@ -1,0 +1,6 @@
+$("li#<%= dom_id(@entry) %> .number").html("<%= @entry.likes_score %>");
+$("li#<%= dom_id(@entry) %> svg").hide();
+$("li#<%= dom_id(@entry) %> svg.<%= @svg_class %>").show();
+
+// react component updates itself
+//$("a#<%= dom_id(@entry) %>").html("<%= liked? ? "Liked" : "Like" %>");

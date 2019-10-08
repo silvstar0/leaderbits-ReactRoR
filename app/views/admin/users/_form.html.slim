@@ -1,0 +1,197 @@
+= simple_form_for [:admin, user], html: { multipart: true } do |f|
+  = f.input :name, required: true, autofocus: true
+  = f.input :email, required: true, autocomplete: "email"
+  = f.association :organization, as: :select, collection: organizations_collection(for_user: current_user), input_html: { multiple: false, name: 'user[organization_id]'}, include_blank: false
+  = f.association :schedule, as: :select, collection: Schedule.all.order(id: :asc), input_html: { multiple: false, name: 'user[schedule_id]' }
+
+  div style="height: 10px"
+
+  = f.input :c_level, label: "C-Level(can access everything within <strong>#{f.object.organization&.name || 'chosen'}</strong> Account".html_safe, hint: "It includes Account payment method settings, user and team management, all entries visibility)".html_safe
+  div style="height: 10px"
+
+  = f.input :goes_through_leader_welcome_video_onboarding_step, label: 'User goes through welcome video(for actual active LeaderBits recipient leaders) step', hint: 'You may need to uncheck this option for users who are mentors or team leaders who only review entries of their teams and do not receive LeaderBits.'
+
+  div style="height: 10px"
+
+  = f.input :goes_through_leader_strength_finder_onboarding_step, hint: "You may need to uncheck this option for users who are real mentors themselves(reviewing other entries), who do not receive LeaderBits."
+
+  div style="height: 10px"
+
+  = f.input :goes_through_team_survey_360_onboarding_step, hint: "You may need to uncheck this options for users who are not interested in other people giving them anonymous 360 Team review."
+
+  div style="height: 10px"
+
+  = f.input :goes_through_organizational_mentorship_onboarding_step, hint: "You may need to uncheck this option for users of new Accounts in case of mass import with all mentorship associations created upfront. Please NOTE: new mentees added by mentors are created with this option set to FALSE to make their onboarding workflow non-confusing."
+
+  div style="height: 10px"
+
+  = f.input :leaderbits_sending_enabled, hint: 'If unchecked it will disable all the LeaderBit-recipient features(Dashboard, Accountability, Points). \nYou may need to uncheck it for mentor/team leader users who are managing their teams/mentees, reply to entries and not really interested in receiving LeaderBits themselves.'
+
+  div style="height: 10px"
+
+  = f.input :personalized_leaderbits_algorithm_instead_of_regular_schedule, hint: "You may need to check it in case you want to switch user from regular #{user.try(:schedule).try(:name)} schedule to the personalized LeaderBits algorithm(which is based on 360 Team survey & Leadership Strength Finder data)"
+
+  div style="height: 10px"
+
+  = f.input :can_create_a_mentee, hint: "It enables Mentorship Menu and gives a leader permission to invite a mentee. Check this option in case a leader has paid for it."
+
+  div style="height: 10px"
+
+  = f.input :day_of_week_to_send, collection: Date::DAYNAMES,  include_blank: false
+  = f.input :hour_of_day_to_send, collection: 0..23, include_blank: false
+  = f.input :time_zone, priority: /US/
+
+  - if user.persisted?
+    div style="height: 10px"
+
+    fieldset.fieldset
+      legend Pause Challenges
+      .row
+        .medium-4.small-12.columns
+          = react_component 'DateRangeSelector'
+        .medium-8.small-12.columns
+          .input.text.optional
+            label.text for="user_leaderbits_sending_paused_reason" What's happening?
+          = text_area_tag 'vacation_mode_reason', '', cols: 10, rows: 3, class: 'text optional'
+
+
+      .row
+        .small-12.columns
+          - user.vacation_modes.each do |vacation_mode|
+            div style="border: 1px solid #cacaca; margin-bottom: 15px; padding: 10px"
+              = vacation_mode.starts_at.in_time_zone(ActiveSupport::TimeZone[user.time_zone])
+              | &nbsp; - &nbsp;
+              = vacation_mode.ends_at.in_time_zone(ActiveSupport::TimeZone[user.time_zone])
+              blockquote style="margin-top: 15px"
+                = vacation_mode.reason
+
+              = link_to 'Delete', [:admin, vacation_mode], method: :delete, data: { confirm: 'Are you sure you want to delete this vacation mode?' }
+
+  - if f.object.persisted? && official_leaderbits_org_names.include?(f.object.organization.name)
+    fieldset.fieldset.callout.alert
+      .row
+        .columns
+          legend
+            = f.object.first_name
+            strong , as an official LeaderBits employee,
+            | &nbsp;responsible for managing the following accounts:
+          br
+
+      - Organization.order(name: :asc).in_groups_of(5).each do |organization_array|
+        .row
+          - organization_array.each do |organization|
+            .card.columns style="width: 300px; border: 0; background: transparent"
+              .input
+                - if organization.blank?
+                  label &nbsp;
+                - else
+                  - #TODO-High find a way to speed it up - it generates tons of SQL queries
+                  - if LeaderbitsEmployee.where(user: user, organization: organization).exists?
+                    input checked="" name="user[employee_in_organization][#{organization.id}]" id="employee_in_organization_#{organization.id}" type="checkbox"
+                  - else
+                    input name="user[employee_in_organization][#{organization.id}]" id="employee_in_organization_#{organization.id}" type="checkbox"
+
+                  - if organization.leaderbits_sending_enabled?
+                    label for="employee_in_organization_#{organization.id}"= organization.name
+                  - else
+                    label for="employee_in_organization_#{organization.id}" style="text-decoration: line-through" title="LeaderBits sending is disabled for #{organization.name}" = organization.name
+      p style="text-decoration: underline" Please note that this role gives user special admin interface abilities so be careful when assigning such role.
+      p style="text-decoration: underline" For user with LeaderBits employee in order to be able to create new Account user must be part of at least one of the following accounts: #{official_leaderbits_org_names.to_sentence}.
+
+    - if LeaderbitsEmployee.where(user: f.object).exists?
+      fieldset.fieldset.callout.alert
+        .row
+          - active_recipient_user_ids = User.active_recipient.collect(&:id)
+          - total = active_recipient_user_ids.count
+          .columns
+            legend
+              = f.object.first_name
+              strong , as an official LeaderBits employee,
+              | &nbsp;responsible for replying to entries of the following leaders(
+              strong #{LeaderbitEmployeeMentorship.where(mentor_user: user, mentee_user_id: active_recipient_user_ids).count}/#{total} or #{number_to_percentage 100.0*LeaderbitEmployeeMentorship.where(mentor_user: user, mentee_user_id: active_recipient_user_ids).count/total, precision: 0}
+              |)
+
+            p
+              | Compare with:&nbsp;
+              - other_mentorships = LeaderbitEmployeeMentorship.where(mentee_user_id: active_recipient_user_ids).where.not(mentor_user: user).group(:mentor_user_id).count
+              - other_mentorships.each do |user_id, count|
+                - mentor_user = User.find(user_id)
+                span
+                  = content_tag_for(:a, mentor_user, title: mentor_user.name, style: "color: #{mentor_user.initials_color}") { mentor_user.name_initials }
+                  |  has #{count}/#{total} or #{number_to_percentage 100.0*LeaderbitEmployeeMentorship.where(mentor_user: mentor_user, mentee_user_id: active_recipient_user_ids).count/total, precision: 0}&nbsp; | &nbsp;
+
+
+        - all_leaderbit_employee_mentorships = LeaderbitEmployeeMentorship.all
+        - Organization.where(leaderbits_sending_enabled: true).where.not(name: [].push('Joel', 'New customer', 'Modern CTO', 'Logic17', 'Brand New Account')).order(name: :asc).each do |organization|
+          ul.accordion data-accordion="" data-allow-all-closed="true"
+            li.accordion-item data-accordion-item=""
+              / Accordion tab title
+              a.accordion-title href="#"
+                font style="display: inline-block; width: 200px"
+                  = organization.name
+                | &nbsp;
+                small style="color: #000; display: inline-block; width: 200px"
+                  strong
+                    = "#{LeaderbitEmployeeMentorship.where(mentor_user_id: user.id).joins(:mentee_user).where('users.organization_id = ?', organization.id).count} of #{organization.users.where(leaderbits_sending_enabled: true).count}"
+                  | &nbsp;&nbsp;created&nbsp;
+                  time.timeago datetime=organization.created_at.getutc.iso8601
+                small style="color: #000; "
+                = raw mentors_in_organization_as_initials(organization)
+
+              / Accordion tab content: it would start in the open state due to using the `is-active` state class.
+              .accordion-content data-tab-content=""
+                - organization.users.where(leaderbits_sending_enabled: true).order(name: :asc).in_groups_of(5).each do |user_array|
+                  .row
+                    - user_array.each do |user_in_organization|
+                      .card.columns style="width: 300px; border: 0"
+                        .input
+                          - if user_in_organization.blank?
+                            label &nbsp;
+                          - else
+                            - if all_leaderbit_employee_mentorships.any? { |lem| lem.mentor_user_id == user.id && lem.mentee_user_id == user_in_organization.id }
+                              input checked="" name="user[employee_mentor][#{user_in_organization.id}]" id="employee_mentor_#{user_in_organization.id}" type="checkbox"
+                            - else
+                              input name="user[employee_mentor][#{user_in_organization.id}]" id="employee_mentor_#{user_in_organization.id}" type="checkbox"
+
+                            label for="employee_mentor_#{user_in_organization.id}" title=user_in_organization.email
+                              font style="font-size: 12px" = "#{user_in_organization.name}"
+                              | &nbsp;
+                              = leaderbit_employee_mentors_initials user_in_organization.id, all_leaderbit_employee_mentorships
+                .text-center
+                  a.button.hollow.primary onclick="var chbxs = this.closest('ul').querySelectorAll('input'); for(i in chbxs){chbxs[i].checked^=1;}"
+                    | Toggle All
+  = f.submit class: "button"
+
+- if user.persisted?
+  - #TODO move it elsewhere or hide completely?
+  hr
+
+  fieldset.fieldset#mentors
+    legend Mentors
+    .row
+      .small-12.columns
+        - organizational_mentorships = OrganizationalMentorship.where(mentee_user: user).includes(:mentor_user)
+        - organizational_mentorships.each do |organizational_mentorship|
+          blockquote
+            = link_to organizational_mentorship.mentor_user.name, admin_user_path(organizational_mentorship.mentor_user)
+            - if organizational_mentorship.accepted_at.present?
+              div
+                | accepted &nbsp;
+
+                time.timeago datetime=organizational_mentorship.accepted_at.getutc.iso8601
+            - else
+              div not accepted
+
+            = link_to 'Delete', [:admin, organizational_mentorship], method: :delete, data: { confirm: 'Are you sure you want to detach this mentor?' }, class: 'button tiny hollow'
+
+
+        - if @possible_new_mentor_users.present?
+          = form_tag admin_organizational_mentorships_path(user_id: user.uuid), method: :post, html: { novalidate: false } do
+            label for="mentor_user_id" Add Mentor from "#{user.organization.name}" Account:
+            = select_tag "mentor_user_id", options_from_collection_for_select(@possible_new_mentor_users, "id", "name"), include_blank: true, required: true, style: 'margin-bottom: 0'
+            div
+              small
+                | Please note that manual adding skips email invitation to mentee, confirmation process and mentee becomes automatically "confirmed".
+
+            .small-12
+              = submit_tag 'Save', class: 'button primary'

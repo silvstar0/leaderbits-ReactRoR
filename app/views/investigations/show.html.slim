@@ -1,0 +1,26 @@
+.row
+  .small-centered.small-12.columns
+    table.unstriped
+      - @organizations.each do |organization|
+        tr
+          td colspan=2
+            div style="height: 5px; background-color: black; width: 100%"
+        tr.stripped
+          td
+            h3.text-right = link_to organization.name, [:admin, organization]
+          td
+            = organization.created_at.stamp('Dec 31 23:59:59')
+
+        - organization.users.where(leaderbits_sending_enabled: true).order(created_at: :asc).each do |user|
+          tr
+            td
+              .text-right
+                = link_to user.name, [:admin, user]
+                | &nbsp;
+                a onClick="this.parentElement.nextElementSibling.style.display = 'block'; this.remove()" ?
+              div.text-right style="display: none"
+                blockquote
+                  = Admin::UserDecorator.new(user).humanized_roles
+
+            td
+              = user.created_at.stamp('Dec 31 23:59:59')

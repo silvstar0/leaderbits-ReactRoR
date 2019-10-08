@@ -1,0 +1,102 @@
+- content_for(:page_title, 'Admin Dashboard')
+
+.row
+  .large-12.columns
+    ul.tabs#example-tabs data-tabs=""
+      li.tabs-title.is-active
+        a href="#panel1" aria-selected="true" Engagement Report
+      li.tabs-title
+        a href="#panel2" Welcome video stats
+
+.row
+  .large-12.columns
+    .tabs-content data-tabs-content="example-tabs"
+      .tabs-panel.is-active#panel1
+        .row
+          .large-12.columns.text-center
+            .row
+              .small-6.columns
+                h5 Account
+              .small-6.columns
+                  div style="min-height: 42px"
+                    h5 style="display: inline-block"
+                      - oldest_organization = Organization.order(created_at: :asc).first!
+                      = activity_date_range(oldest_organization).first.stamp('Dec 31 2019')
+                      | &nbsp;–&nbsp;
+                      = activity_date_range(oldest_organization).last.stamp('Dec 31 2019')
+                    = form_tag admin_dashboard_path, method: 'get', style: 'display: inline-block', class: 'float-right' do |f|
+                      = select_tag "period", period_options, include_blank: false, style: 'margin-bottom: 0', onchange: "this.closest('form').submit()"
+
+                  h4.text-center style="display: block"
+                    | How many people were active?
+
+                  - date_range = activity_date_range(oldest_organization)
+                  - @since_at = date_range.first
+                  - @until_at = date_range.last
+
+            .row
+              .small-12.columns
+                hr
+
+            - Organization.where(discarded_at: nil, leaderbits_sending_enabled: true).order(id: :desc).each do |organization|
+              .row
+                .small-6.columns
+                  = link_to organization.name, [:admin, organization]
+
+                  div
+                    - if organization.logo.attached?
+                      = logo(organization)
+
+                  - activity_chart = OrganizationEngagementReport.new since_at: @since_at, until_at: @until_at, organization: organization
+                  div style="padding: 20px 0; font-weight: 400; background: #FAFAFA; border: 1px solid #CCCCCC; font-size: 18px; color: #4D4D4D; letter-spacing: -0.55px; width: auto"
+                    font.text-center style="display: block; font-size: 30px; color: #432CBE; text-align: center; font-weight: 400" = "#{pluralize activity_chart.completed_challenges_count, 'action'} taken"
+
+                .small-6.columns
+                  div.columns style="border: 1px solid #f1f1f1; padding-top: 41px; height: 100%"
+                    - if activity_chart.display?
+
+                      - if activity_chart.highly_active_users_label.present?
+                        div style="border: 1px solid lightgray"
+                          div style="background: #2275d7; height: 10px; width: #{activity_chart.highly_active_users_perc}%"
+                        = raw activity_chart.highly_active_users_label
+
+                      - if activity_chart.active_users_label.present?
+                        div style="margin: 15px 0 ;"
+                          div style="border: 1px solid lightgray"
+                            div style="background: #4a90e2; height: 10px; width: #{activity_chart.active_users_perc}%;"
+                          = raw activity_chart.active_users_label
+
+                      - if activity_chart.not_active_users_label.present?
+                        div style="border: 1px solid lightgray"
+                          div style="background: #76abe9; height: 10px; width: #{activity_chart.not_active_users_perc}%"
+                        = raw activity_chart.not_active_users_label
+
+                    - else
+                      p No data is available for the selected period.
+
+              .row
+                .small-12.columns
+                  hr
+
+      .tabs-panel#panel2
+        .row
+          .large-12.columns.text-center
+            table.stack.unstriped
+              thead
+                tr
+                  th style="width: 160px; text-align: center"
+                    | Account
+                  th style="width: 160px; text-align: center"
+                    | User
+                  th style="width: 160px; text-align: center"
+                    | Seen welcome video for leaders?
+              tbody
+                - #TODO improve performance
+                - @users_for_welcome_video_stats.each do |user|
+                  tr id=dom_id(user)
+                    td= link_to(user.organization.name, admin_organization_path(user.organization.to_param))
+                    td= link_to(user.name, admin_user_path(user.to_param))
+                    td
+                      = number_to_percentage(user.welcome_video_seen_percentage, precision: 0) rescue '0%'
+                      br
+                      = welcome_video_time_watched(user)

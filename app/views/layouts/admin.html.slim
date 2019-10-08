@@ -1,0 +1,31 @@
+doctype html
+head
+  title= page_title app_name: 'LeaderBits', reverse: 1
+
+  meta charset="utf-8"
+  meta name="viewport" content="width=device-width, initial-scale=1.0"
+
+  = csrf_meta_tags
+  /meta data-turbolinks-track="true" name="tracking-token" content=Time.now.to_i
+  = csp_meta_tag
+  = action_cable_meta_tag
+  = stylesheet_link_tag    'admin', media: 'all'
+
+  = Gon::Base.render_data
+  = javascript_include_tag "admin"
+  = javascript_pack_tag "application"
+
+- content_for(:extra_body_classes, 'admin')
+body class=extended_body_class
+  .row.full-width
+    .small-12.medium-12.columns.top-header-section
+      = render 'shared/application_nav'
+
+
+  .row.full-width
+    .large-12
+      ul.breadcrumbs.columns style='margin-top: 16px'
+        = render_breadcrumbs tag: :li, separator: ''
+
+  == yield
+  = javascript_tag yield(:javascript)

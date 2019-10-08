@@ -1,0 +1,6 @@
+= simple_form_for [:admin, schedule] do |f|
+  = f.input :name, required: true, autofocus: true
+
+  div style="height: 20px"
+  = f.submit class: "button"
+

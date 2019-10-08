@@ -1,0 +1,20 @@
+li id="#{dom_id(entry)}" class="entry-item"
+  .replaceable
+    div style="background-color: #{EntryReply::Colors::GREY}"
+      .content.small-12 style="clear: both"
+        = auto_link(entry.content)
+    .footer
+      .info
+        time.timeago datetime=entry.display_time.getutc.iso8601
+
+      .actions
+        = link_to 'Delete', [entry.leaderbit, entry], method: :delete, remote: true, data: { confirm: 'Are you sure?' }, style: 'margin-right: 19px;'
+        = link_to 'Edit', [:edit, entry.leaderbit, entry], remote: true
+  - if display_entry_replies?
+    = react_component('EntryReplyCollection', { can_toggle_entry_like: false,
+            content: '',
+            entry_id: entry.id,
+            prefilled_replies: [],
+            current_user: current_user.name,
+            entry_liked_message: LikedMessageGenerator.new(entry).return_for_user(current_user),
+            replies: entries_index_replies(entry)})

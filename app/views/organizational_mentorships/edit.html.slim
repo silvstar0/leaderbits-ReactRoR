@@ -1,0 +1,5 @@
+== render 'organizational_mentorships/form'
+
+div.text-center
+  hr
+  = link_to "#{@organizational_mentorship.mentee_user.name} is no longer part of the team", organizational_mentorship_path(@organizational_mentorship, controller_name: params[:controller_name], action_name: params[:action_name]), method: 'delete', style: 'text-decoration: underline', data: { confirm: 'Are you sure to continue?' }, class: 'clear button alert'

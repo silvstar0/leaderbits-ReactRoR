@@ -1,0 +1,182 @@
+version: 2 # use CircleCI 2.0
+jobs: # a collection of steps
+  test: # runs not using Workflows must have a `build` job as entry point
+    parallelism: 1 # run one instance of this job in parallel
+    working_directory: ~/leader # directory where steps will run
+    docker: # run the steps with Docker
+      - image: circleci/ruby:2.6.2-node-browsers # ...with this image as the primary container; this is where all `steps` will run
+        environment: # environment variables for primary container
+          BLAZER_DATABASE_URL: postgres://leader:leader@127.0.0.1:5432/leader_test
+          BUNDLE_JOBS: 1
+          BUNDLE_PATH: vendor/bundle
+          BUNDLE_RETRY: 1
+          BUNDLER_VERSION: 2.0.1
+          COVERAGE: 1
+          DB_HOST: 127.0.0.1
+          DB_PASSWORD: leader
+          DB_USERNAME: leader
+          NODE_ENV: test
+          PGHOST: 127.0.0.1
+          PGUSER: leader
+          RAILS_ENV: test
+      - image: circleci/postgres:9.5-alpine # database image
+        environment: # environment variables for database
+          POSTGRES_DB: leader_test
+          POSTGRES_PASSWORD: leader
+          POSTGRES_USER: leader
+    steps: # a collection of executable commands
+      - checkout # special step to check out source code to working directory
+
+      - restore_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Install yarn dependencies
+          command: yarn install
+
+      - save_cache:
+          key: yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.yarn-cache
+
+      # Restore bundle cache
+      - restore_cache:
+          keys:
+            - bundle-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Bundler version
+          command: gem install bundler --version $BUNDLER_VERSION
+
+      - run:
+          name: Setup github personal access token for private deps checkout
+          command: bundle config GITHUB__COM ${GITHUB_PERSONAL_ACCESS_TOKEN}:x-oauth-basic
+
+      - run:
+          name: Skip host authenticity verification for gist cloning
+          command: |
+            echo "Host gist.github.com" >> ../.ssh/config
+            echo "  StrictHostKeyChecking no" >> ../.ssh/config
+
+      - run:
+          name: Bundle Install
+          command: bundle install --path vendor/bundle
+
+      # Store bundle cache
+      - save_cache:
+          key: bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - run:
+          name: Verify bundle security
+          command: bundle exec bundle-audit check --update
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Rubocop
+          halt_build_on_fail: false # default true
+          command: bin/rubocop-ci-check
+
+      - run:
+          name: Check for Rails Best Practices warnings
+          command: bundle exec rails_best_practices --config config/rails_best_practices.yml
+
+      - run:
+          name: Check for SCSS warnings
+          halt_build_on_fail: false # default true
+          command: bundle exec scss-lint app/assets/stylesheets/**/*.scss
+
+      - run:
+          name: Database setup
+          command: bundle exec rake db:schema:load
+
+      - run:
+          name: Run rspec in parallel
+          command: |
+            bundle exec rspec --profile 10 \
+                              --no-fail-fast \
+                              --require rspec/instafail \
+                              --format RSpec::Instafail \
+                              --format progress \
+                              --format RspecJunitFormatter \
+                              -o ~/rspec/rspec.xml \
+                              $(circleci tests glob "spec/factories_spec.rb" "spec/{models,jobs,lib,helpers,mailers,policies,services,controllers,features}/**/*_spec.rb")
+
+      - store_artifacts:
+          path: tmp/reports
+          destination: simplecov
+
+      - store_test_results:
+          path: ~/rspec
+
+  deploy-development:
+    docker:
+      - image: buildpack-deps:trusty
+        environment:
+          HEROKU_APP_NAME: leaderbits-staging
+    steps:
+      - checkout
+      - run:
+          name: Deploy Development to Heroku Staging
+          command: |
+            echo "machine api.heroku.com" > ../.netrc
+            echo "  login ${HEROKU_EMAIL}" >> ../.netrc
+            echo "  password ${HEROKU_API_KEY}" >> ../.netrc
+            echo "machine git.heroku.com" >> ../.netrc
+            echo "  login ${HEROKU_EMAIL}" >> ../.netrc
+            echo "  password ${HEROKU_API_KEY}" >> ../.netrc
+            git remote add staging https://git.heroku.com/leaderbits-staging.git
+            git push staging development:master -f
+
+#            curl https://cli-assets.heroku.com/install.sh | sh
+#            heroku pg:reset DATABASE --confirm leaderbits-staging
+#            git push staging development:master -f
+#            heroku run rake db:migrate db:seed --app leaderbits-staging
+#
+  deploy-master:
+    docker:
+      - image: buildpack-deps:trusty
+        environment:
+          HEROKU_APP_NAME: leaderbits
+    steps:
+      - checkout
+      - run:
+          name: Deploy Master to Heroku Production
+          command: |
+            echo "machine api.heroku.com" > ../.netrc
+            echo "  login ${HEROKU_EMAIL}" >> ../.netrc
+            echo "  password ${HEROKU_API_KEY}" >> ../.netrc
+            echo "machine git.heroku.com" >> ../.netrc
+            echo "  login ${HEROKU_EMAIL}" >> ../.netrc
+            echo "  password ${HEROKU_API_KEY}" >> ../.netrc
+
+            git remote add production https://git.heroku.com/leaderbits.git
+            git push production master -f
+
+
+#TODO-low use ENV keys instead of .netrc hack e.g.
+#git push https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}-production.git master
+#curl https://cli-assets.heroku.com/install.sh | sh
+#heroku run rake db:migrate --app ${HEROKU_APP_NAME}-production
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - test
+      - deploy-development:
+          requires:
+            - test
+          filters:
+            branches:
+              only: development
+      - deploy-master:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master

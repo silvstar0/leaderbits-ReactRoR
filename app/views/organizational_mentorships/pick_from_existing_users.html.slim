@@ -1,0 +1,25 @@
+= simple_form_for(@organizational_mentorship, html: {novalidate: false, disabled: true}) do |f|
+  .small-12.small-centered
+    - choose_mentee_collection.each do |user|
+      .card style="background-color: #50e3c2; padding: 15px"
+        table style="border: 0;"
+          tbody style="background: none; border: 0"
+            tr
+              - onclick = "document.getElementById('organizational_mentorship_name').value = #{user.name.to_json} ; document.getElementById('organizational_mentorship_email').value = #{user.email.to_json}; var e = document.querySelector('input[type=submit]') ; e.classList.remove('disabled') ; e.removeAttribute('disabled')"
+              td style="white-space: nowrap"
+                input type="radio" name="team-member-selector" id="radio#{user.id}" style="margin: 0" onClick=onclick
+              td style="width: 99%"
+                label for="radio#{user.id}" style="font-size: 18px" onClick=onclick
+                  = user.name
+
+  .form-inputs.text-left
+    = f.input :name, as: :hidden, required: true, placeholder: "Name", class: 'name'
+    = f.input :email, as: :hidden, required: true, placeholder: "Email", class: 'email'
+
+    = hidden_field_tag 'controller_name', params[:controller_name] || controller_name
+    = hidden_field_tag 'action_name', params[:action_name] || action_name
+
+  .form-actions.text-center style="margin-top: 10px"
+    = f.button :submit, 'Save', class: 'btn primary', disabled: true
+
+    = link_to "Cancel", {controller: params[:controller_name], action: params[:action_name]}, 'data-tg-refresh-on-success' => 'dynamic-list-container dynamic-list-container-footer', 'data-tg-remote' => 'get', 'data-tg-refresh-on-error' => "dynamic-list-container dynamic-list-container-footer", class: 'clear button secondary small'

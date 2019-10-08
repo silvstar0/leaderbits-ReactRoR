@@ -1,0 +1,32 @@
+@import 'settings';
+
+body.devise {
+  background-color: $light-gray;
+  padding-top: 40px;
+
+  .logo-container {
+    padding-bottom: 40px;
+    text-align: center;
+
+    img {
+      width: 400px;
+    }
+  }
+
+  .sign-up-container {
+    background-color: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .05);
+    margin-bottom: 40px;
+    padding: 40px;
+  }
+
+  .system-alert {
+    color: #fff;
+    margin: 0 auto;
+    margin-bottom: 9px;
+    padding: 9px;
+    text-align: center;
+    width: 75%;
+  }
+}

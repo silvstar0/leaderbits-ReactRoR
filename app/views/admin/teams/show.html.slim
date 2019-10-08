@@ -1,0 +1,29 @@
+- content_for(:page_title, "Admin : Teams : #{@team.name}")
+
+.row.full-width
+  .medium-6.columns
+    h1= @team.name
+
+.row.full-width style="margin-top: 20px"
+  .large-9.small-12.columns
+    table.stack.index width="100%"
+      thead
+        tr
+          th Name
+          th Role
+
+      tbody
+        - leader_users(@team).each do |user|
+          = content_tag_for :tr, user, id: "leaderbit_#{user.id}" do
+            td
+              = link_to user.name, [:admin, user]
+            td
+              | Leader
+
+        - member_users(@team).each do |user|
+          = content_tag_for :tr, user, id: "leaderbit_#{user.id}" do
+            td
+              = link_to user.name, [:admin, user]
+            td
+              | Member
+

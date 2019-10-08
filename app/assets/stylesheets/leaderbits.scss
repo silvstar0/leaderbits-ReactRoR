@@ -1,0 +1,67 @@
+@import 'settings';
+
+.leaderbits-show {
+  @media screen and (max-width: 420px) {
+    .badge {
+      display: none;
+    }
+  }
+}
+
+//TODO - same as next-challenge. Extract common parts!
+.leaderbit-article {
+  margin-bottom: 90px;
+  margin-top: 90px;
+}
+
+.content-below-iframe-video {
+  margin-top: 90px;
+}
+
+@media screen and (max-width: 640px) {
+  .content-below-iframe-video {
+    margin-top: 36px;
+  }
+
+  .leaderbit-article {
+    margin-bottom: 36px;
+    margin-top: 36px;
+  }
+}
+
+//body.leaderbits.show #nav-container
+//  margin-bottom: 0px
+//
+//.row.leaderbits-list
+//  margin-bottom: 60px
+//
+//.completed-challenges, .total-points, .total-entries
+//  color: #fff
+//.completed-challenges
+//  background-color: #009948
+//.total-points
+//  background-color: #005a99
+//.total-entries
+//  background-color: #990094
+//
+//p.next-challenge
+//  padding: 30px
+//  font-size: 24px
+//  margin: 60px 0
+//  background-color: #eee
+//
+//.user-progress
+//  margin: 60px 0
+//
+//@media screen and (max-width: 640px)
+//  .content-below-iframe-video
+//    margin-top: -30px
+//@media screen and (min-width: 40em)
+//  .content-below-iframe-video
+//    margin-top: -60px
+//.leaderbits-list
+//  .button.success
+//    font-size: 26px
+//    color: #045028
+//    font-weight: bold
+//    box-shadow: 2px 2px 0px 0px rgba(#1e8845, 0.99)

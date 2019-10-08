@@ -1,0 +1,164 @@
+@import 'settings';
+
+.entries-index,
+.entries-unread {
+  a {
+    display: inline-block;
+  }
+}
+
+// Medium and up
+@media screen and (min-width: 40em) {
+  .reflectdb {
+    #entry_visibility,
+    #boomerang_type {
+      //height: 53px;
+    }
+  }
+}
+
+.entry_groups {
+  .reflectdb {
+    img {
+      max-height: 133px
+    }
+  }
+}
+
+.reflectdb {
+  textarea,
+  input {
+    background: #f2f2f2;
+    font-size: 18px;
+  }
+
+  #entry_visibility,
+  #boomerang_type {
+    height: 100%;
+    max-width: 100%;
+    width: auto;
+  }
+
+  .button {
+    //height: 53px
+  }
+
+  .tabs {
+    li {
+      width: 50%;
+    }
+  }
+
+  .tabs-content {
+    border: 0;
+
+    .tabs-panel {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  .tabs-title {
+    a {
+      border: 1px solid #f35b5b;
+      color: #f35b5b;
+      font-size: 18px;
+      height: 58px;
+      text-align: center;
+    }
+  }
+
+  .tabs-title > a:focus,
+  .tabs-title > a[aria-selected='true'] {
+    background: #f35b5b;
+    color: #fff;
+  }
+
+  .entry-item {
+    clear: both;
+    padding: 0;
+
+    .footer {
+      //background: #fff
+      //height: 48px
+      //display: flex
+      //align-items: center
+      //justify-content: space-between
+      .info {
+        //height: 48px
+        float: left;
+
+        //padding-left: 19px
+        font-size: 14px;
+      }
+
+      .actions {
+        float: right;
+        font-size: 14px;
+        padding-right: 19px;
+        text-align: left;
+      }
+    }
+  }
+
+  ul.entries {
+    list-style: none;
+    margin: 0;
+
+    li {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+  }
+
+  .content {
+    background-color: #f2f2f2;
+    padding: 27px 17px;
+    text-align: left;
+    white-space: pre-line;
+  }
+
+  #my-entries {
+    .content {
+      justify-content: left;
+      min-height: 76px;
+    }
+  }
+
+  #community {
+    .content {
+      justify-content: center;
+      min-height: 127px;
+    }
+
+    .likes-counter {
+      align-items: center;
+      background: #fff;
+      box-shadow: 0 2px 4px -2px rgba(0, 0, 0, .5);
+      display: flex;
+      flex-direction: column;
+      height: 72px;
+      justify-content: space-around;
+      left: -8px;
+      position: absolute;
+      text-align: center;
+      top: 27px;
+      width: 55px;
+
+      svg {
+        cursor: pointer;
+      }
+    }
+
+    .number {
+      font-size: 14px;
+    }
+  }
+}
+
+.entries-list-image-container {
+  img {
+    // fix for IE
+    max-height: 108.11px;
+  }
+}

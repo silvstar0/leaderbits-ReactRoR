@@ -1,0 +1,9 @@
+p= "#{@user.first_name}! Congratulations you're making real progress each week as a leader. Here is the proof. Recently you've taken the following actions:"
+
+- token = @user.issue_new_authentication_token_and_return
+- @leaderbit_logs.each do |leaderbit_log|
+  = render 'shared/leaderbit_log_email_report_line', leaderbit_log: leaderbit_log, recipient_user: @user, token: token
+
+p Consistency is key, keep taking action each week to improve. Your effort compounds like interest. You'll begin to see even larger compounding improvements shortly. Keep going!
+
+= leaderbot_footer_message

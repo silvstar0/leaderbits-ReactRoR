@@ -1,0 +1,44 @@
+- token = @user.authentication_token
+
+- if @completed_leaderbit_logs.present?
+  p= "#{@user.first_name}! Congratulations you're making real progress each week as a leader. Here is the proof. Recently you've taken the following actions:"
+
+
+  - @completed_leaderbit_logs.each do |leaderbit_log|
+    = render 'shared/leaderbit_log_email_report_line', leaderbit_log: leaderbit_log, recipient_user: @user, token: token
+
+  p Consistency is key, keep taking action each week to improve. Your effort compounds like interest. You'll begin to see even larger compounding improvements shortly. Keep going!
+
+  = leaderbot_footer_message
+- elsif @current_leaderbit_in_progress.present?
+  p
+    = "#{@user.first_name}, you've had no progress this month, it's time to get back into a routine of improving each week."
+
+  p
+    = link_to 'Click here', start_leaderbit_url(@current_leaderbit_in_progress, user_token: token, user_email: @user.email)
+    | &nbsp;to complete a challenge and make progress as a leader.
+  p
+    | You'll feel fantastic, I promise.
+
+  = leaderbot_footer_message
+- else
+  - # no activity, no in-progress leaderbit
+  p
+    = "#{@user.first_name}, you've had no progress this month, it's time to get back into a routine of improving each week."
+
+  hr
+
+  p Reminder: Your latest Leaderbit Challenge has arrived!
+  h2 #{@last_sent_leaderbit.name}
+
+  = simple_format @last_sent_leaderbit.desc
+  p
+    = link_to start_leaderbit_url(@last_sent_leaderbit, user_email: @user.email, user_token: token) do
+      = video_cover @last_sent_leaderbit
+
+  p #{link_to '>> Watch LeaderBit <<', start_leaderbit_url(@last_sent_leaderbit, user_email: @user.email, user_token: token)}
+
+  small
+    = do_not_forward_email_footer_message
+
+  = leaderbot_footer_message

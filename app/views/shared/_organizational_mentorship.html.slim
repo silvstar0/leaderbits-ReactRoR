@@ -1,0 +1,55 @@
+.small-12.columns#my-unique-id data-tg-refresh="dynamic-list-container" style="margin-top: 7px"
+  - if params[:new].blank? && params[:edit].blank?
+    / h4.text-center
+    /   | Here's everyone at your team
+
+    - if can_add_new_mentee?
+      div.text-center style="margin-bottom: 20px"
+        = link_to "Add New Mentee", {controller_name: controller_name, action_name: action_name, new: 1}, 'data-tg-refresh-on-success' => 'dynamic-list-container dynamic-list-container-footer', 'data-tg-remote' => 'get', 'data-tg-refresh-on-error' => "dynamic-list-container dynamic-list-container-footer", style: "text-decoration: underline"
+
+    - organizational_mentorships = OrganizationalMentorship.where(mentor_user_id: current_user.id).includes(:mentee_user)
+    - if organizational_mentorships.present?
+      table.table.unstriped style="margin-bottom: 0"
+        thead style="background-color: transparent"
+          tr
+            th.text-center Name
+            th.text-center Email
+            th.text-center
+
+        tbody style="background-color: transparent"
+          - organizational_mentorships.each do |organizational_mentorship|
+            - user = organizational_mentorship.mentee_user
+
+            tr style="background-color: transparent"
+              td.text-center
+                = user.name
+                br
+                  small
+                    - if organizational_mentorship.accepted_at?
+                      | Invitation accepted&nbsp;
+                      time.timeago datetime=organizational_mentorship.accepted_at.getutc.iso8601
+                    - else
+                      | Invited&nbsp;
+                      time.timeago datetime=organizational_mentorship.created_at.getutc.iso8601
+
+              td.text-center
+                = user.email
+
+              td.text-center
+                = link_to "Edit", {controller_name: controller_name, action_name: action_name, edit: organizational_mentorship.id}, 'data-tg-refresh-on-success' => 'dynamic-list-container dynamic-list-container-footer', 'data-tg-remote' => 'get', 'data-tg-refresh-on-error' => "dynamic-list-container dynamic-list-container-footer", style: "text-decoration: underline"
+
+  - if params[:new].present?
+    div.text-left
+      - #TODO rethink this condition, what if user was already there and not created by current_user
+      - if User.where(created_by_user_id: current_user.id).present?
+        h4.text-center Choose New Mentee
+        - # can only choose from existing members
+        = render file: 'organizational_mentorships/pick_from_existing_users'
+      - else
+        h4.text-center Add New Mentee
+        - # allowed to create a new user or choose from existing ones
+        = render file: 'organizational_mentorships/new'
+
+  - if params[:edit].present?
+    h4.text-center Edit Mentee
+    = render file: 'organizational_mentorships/edit'

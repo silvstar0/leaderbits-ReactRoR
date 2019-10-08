@@ -1,0 +1,28 @@
+= simple_form_for(@organizational_mentorship, html: {novalidate: false}, disabled: params[:edit].present?) do |f|
+  / = f.error_notification
+  / = f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present?
+
+  .form-inputs.text-left
+    = f.input :name, as: :string, required: true, placeholder: "Name", class: 'name', disabled: params[:edit].present?, readonly: params[:edit].present?
+    = f.input :email, as: :email, required: true, placeholder: "Email", class: 'email', disabled: params[:edit].present?, readonly: params[:edit].present?
+
+    = hidden_field_tag 'controller_name', params[:controller_name] || controller_name
+    = hidden_field_tag 'action_name', params[:action_name] || action_name
+
+  - if params[:new].present? && choose_mentee_collection.present?
+    div
+      | Or choose from the list:
+
+    - _collection = choose_mentee_collection
+    - last_person = _collection.last
+    - _collection.each do |person|
+      a onClick="document.getElementById('organizational_mentorship_name').value = #{person.name.to_json} ; document.getElementById('organizational_mentorship_email').value = #{person.email.to_json}" = person.name
+      - if person == last_person
+        | .
+      - else
+        | , &nbsp;
+
+  .form-actions.text-center style="margin-top: 10px"
+    = f.button :submit, 'Save', class: params[:edit].blank? ? 'btn primary' : 'btn primary disabled'
+
+    = link_to "Cancel", {controller: params[:controller_name], action: params[:action_name]}, 'data-tg-refresh-on-success' => 'dynamic-list-container dynamic-list-container-footer', 'data-tg-remote' => 'get', 'data-tg-refresh-on-error' => "dynamic-list-container dynamic-list-container-footer", class: 'clear button secondary small'

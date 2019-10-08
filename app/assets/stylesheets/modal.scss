@@ -1,0 +1,135 @@
+$base-modal-icon-spacing: 31px;
+
+.reveal#achievement-unlocked-reveal-container {
+  background: #032c47;
+  border: 0;
+  box-shadow: 0 2px 6px 1px rgba(3, 3, 3, .5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  outline: none;
+  overflow: visible;
+  position: relative;
+
+  a {
+    color: #fff;
+  }
+
+  a:link {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  header {
+    color: #f6f6f6;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .picture {
+    text-align: center;
+  }
+
+  .close-button {
+    background: #032c47;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 35px;
+  }
+
+  h3 {
+    color: #f6f6f6;
+    font-size: 24px;
+    text-align: center;
+  }
+
+  h4 {
+    color: #f6f6f6;
+    font-size: 20px;
+    text-align: center;
+  }
+
+  footer {
+    background-color: #2ec0db;
+    color: #fff;
+    left: 50%;
+    margin: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    transform: translate3d(-50%, -50%, 0);
+    width: 90%;
+  }
+}
+
+.reveal-overlay {
+  background-image: linear-gradient(-134deg, #3023ae 0%, #c86dd7 100%);
+
+  a:link {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  .help-articles {
+    background: none;
+  }
+}
+
+@media screen and (min-width: 640px) {
+  .reveal#achievement-unlocked-reveal-container {
+    height: 740px;
+    width: 377px;
+
+    footer {
+      bottom: -100px;
+      //bottom: -#{$base-modal-icon-spacing * 4.5}
+    }
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .reveal#achievement-unlocked-reveal-container {
+    height: 500px;
+    justify-content: flex-start;
+    min-height: auto;
+    top: 0 !important;
+
+    header {
+      font-size: 25px;
+      margin-top: 30px;
+      padding: 0 30px;
+    };
+
+    h3 {
+      //margin-bottom: #{$base-modal-icon-spacing / 5}
+    }
+
+    .close-button {
+      width: 35px;
+    }
+
+    footer {
+      bottom: -102px;
+    }
+  }
+}
+
+.entries-index,
+.entries-unread {
+  .reveal {
+    color: #0a0a0a !important;
+  }
+
+  .close-reveal-modal {
+    color: #aaa;
+    cursor: pointer;
+    font-size: 2.22222rem;
+    font-weight: bold;
+    line-height: 1;
+    position: absolute;
+    right: 1.22222rem;
+    text-decoration: none;
+    top: .55556rem;
+  }
+}

@@ -1,0 +1,28 @@
+table[border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#FFFFFF" style="border-collapse: collapse; border-spacing: 0; padding: 0; width: 100%;  border: 1px solid #E5EEF5;	border-radius: 4px;	background-color: #FFFFFF;	box-shadow: 0 7px 23px 0 rgba(236,234,234,0.5);"]
+  tr style="border-bottom: 1px solid #E5EEF5; background-color: #F3F9FD"
+    td.paragraph[align="left" colspan=3 valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; width: 39.33%; padding: 13px"]
+      = link_to user.name, admin_user_url(user), style: "color: #0093EE; font-size: 15px; font-weight: 600"
+  /tr style="border-bottom: 1px solid #E5EEF5; background-color: #{cycle '#F3F9FD', '#FFF'}"
+  tr style="border-bottom: 1px solid #E5EEF5; background-color: #FFF"
+    td.paragraph[align="center" valign="middle" style="border-collapse: collapse; border-spacing: 0; margin: 0; width: 33.33%; border-right: 1px solid #E5EEF5; padding: 13px; font-size: 13px"]
+      font style="font-weight: 600"= user.schedule.name.gsub(' schedule', '')
+    td.paragraph[align="center" valign="middle" style="border-collapse: collapse; border-spacing: 0; margin: 0; width: 33.33%; border-right: 1px solid #E5EEF5; padding: 13px; font-size: 13px"]
+      font style="font-weight: 600"= user.organization.name
+    td.paragraph[align="center" valign="middle" style="border-collapse: collapse; border-spacing: 0; margin: 0; width: 33.33%; border-right: 1px solid #E5EEF5; padding: 13px; font-size: 13px;"]
+      font style="font-weight: 600"
+        | Created
+        br
+        = "#{time_ago_in_words(user.created_at)} ago"
+
+  - if display_send_time
+    tr style="background-color: #F23C3C"
+      td.paragraph[align="left" colspan=3 valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; width: 39.33%; padding: 4px"]
+        img[border="0" vspace="0" hspace="0" src="https://d2sass2rshfab6.cloudfront.net/email/clock@2x.png" width="11" alt="" title="" style="vertical-align: middle; color: #FFFFFF; font-size: 10px; margin: 5px; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none;"]
+        font style="font-size: 11px; color: #FFF"
+          | Send Time: #{user.next_leaderbit_to_be_sent_at.in_time_zone(user.time_zone).stamp("Thu 31 Jul 23:59")} #{user.time_zone}
+          | (in&nbsp;
+          = time_ago_in_words user.next_leaderbit_to_be_sent_at
+          / =distance_of_time_in_words(Time.now, user.next_leaderbit_to_be_sent_at)
+          | )
+/  (in 1 day)
+/br

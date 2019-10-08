@@ -1,0 +1,24 @@
+- input_id = "slider#{question.id}"
+
+label style="text-align: center; margin-bottom: 0" for=dom_id(question)
+  = raw question_title(question)
+
+label style="text-align: center"
+  - if question.hint.present?
+    = raw question.hint
+
+- if user_signed_in?
+  - if current_user.system_admin? || current_user.leaderbits_employee_with_access_to_any_organization?
+    label style="text-align: center; color: red"
+      | Tags: #{question.tags.collect(&:label).join(', ')}
+
+.grid-x.grid-margin-x
+  .slider data-initial-start="#{data_initial_start question}" data-end="#{question.right_side}" data-slider="" data-step="1"
+    div style="position: absolute; top: -25px; left: 10px;"
+      = question.left_side
+    div style="position: absolute; top: -25px; right: 10px;"
+      = question.right_side
+
+    span.slider-handle aria-controls="#{input_id}" data-slider-handle="" role="slider" tabindex="1"
+    span.slider-fill data-slider-fill=""
+  input type="hidden" id=input_id name="answers[#{question.id}]"

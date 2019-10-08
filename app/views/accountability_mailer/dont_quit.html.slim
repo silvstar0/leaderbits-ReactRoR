@@ -1,0 +1,19 @@
+p Hi #{@user.first_name},
+
+p
+  | You've missed #{missed_weeks_quantity @user} in a row! Remember it's all about&nbsp;
+  i consistency
+  |.
+
+p Only by small, disciplined effort do you build your skills, not intensity, and keep improving as a leader.
+
+p
+  | I'm here to help you be the best leader you can be, so here’s a friendly reminder that
+  strong &nbsp;10 minutes&nbsp;
+  | is all it takes.
+
+p
+  strong Don't give up on your progress, #{@user.first_name}!&nbsp;
+  | Take this moment to jump in and #{complete_a_challenge_text_in_dont_quit_email @user}. Maintain your momentum and reputation as a leader who is always improving.
+
+= leaderbot_footer_message

@@ -1,0 +1,72 @@
+- content_for(:page_title, "Admin : Surveys : #{@survey.title}")
+
+.row.full-width
+  .medium-6.columns
+    h1= %(#{@survey.title} (#{@survey.anonymous_survey_participant_role}))
+
+  .medium-6.columns.text-right
+    - if policy([:admin, Question]).new?
+      = link_to new_admin_survey_question_path(@survey), class: 'button success' do
+        = fa_icon 'plus-square'
+        | &nbsp; New Question
+    - if policy([:admin, @survey]).edit?
+      = link_to [:edit, :admin, @survey], class: 'button success' do
+        = fa_icon 'edit'
+        | &nbsp; Edit
+
+- if @questions.present?
+  .row.full-width style="margin-top: 20px"
+    .large-9.small-12.columns
+      table.stack.index width="100%"
+        thead
+          tr
+            th
+            th= order_by_link 'Title'
+            th= order_by_link 'Tags'
+            th= :anonymous_survey_similarity_uuid.to_s.humanize.titleize
+            th= order_by_link 'Type'
+            th
+        tbody
+        tbody#survey_questions data-update-url=sort_admin_survey_questions_path(@survey) class='do-sortable'
+          - can_drag = policy([:admin, Question]).sort?
+          - @questions.each do |question|
+            = content_tag_for :tr, question, id: "question_#{question.id}", style: 'border: 4px solid #000' do
+              td style="text-align: center"
+                - if can_drag
+                  span class="hide-for-small-only handle" style="cursor: pointer"
+                    small
+                      | [drag]
+              td
+                a title=question.id
+                  = link_to question.title, [:admin, @survey, question]
+              td
+                - tags = question.tags.pluck(:label)
+                - if tags.present?
+                  ul style="margin: 0"
+                    - tags.each do |label|
+                      li = label
+              td
+                small
+                  = question.anonymous_survey_similarity_uuid
+              td
+                span.show-for-small-only
+                  | Type: &nbsp;
+                = question.type
+
+              td.action
+                ul.button-group.actions.even
+                  li
+                    = link_to [:admin, @survey, question], title: 'View', class: 'button info', style: 'text-align: left' do
+                      = fa_icon 'eye'
+                      | &nbsp; View
+                  - if policy([:admin, question]).edit?
+                    li
+                      = link_to [:edit, :admin, @survey, question], title: 'Edit', class: 'button secondary', style: 'text-align: left' do
+                        = fa_icon 'edit'
+                        | &nbsp; Edit
+                  - if policy([:admin, question]).destroy?
+                    li
+                      = link_to [:admin, @survey, question], method: :delete, title: 'Delete', class: 'button alert', data: { confirm: 'Are you sure?' }, style: 'text-align: left' do
+                        = fa_icon 'remove'
+                        | &nbsp; Delete
+    .large-3.columns

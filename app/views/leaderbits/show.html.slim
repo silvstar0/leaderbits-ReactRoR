@@ -1,0 +1,46 @@
+.row.leaderbit-article
+  .small-12.medium-8.columns.medium-centered
+    .responsive-embed
+      = tracking_leaderbit_video_iframe @leaderbit
+
+  .small-12.medium-8.columns.medium-centered.content-below-iframe-video
+    h3 #{@leaderbit.name}
+
+    = react_component("ReadMore", {desc: @leaderbit.desc, body: @leaderbit.body})
+
+div.reflectdb
+  .row
+    .small-12.medium-8.columns.medium-centered
+      / Add missing icon form Sketch file
+      h4 style="margin-bottom: 0" ReflectDB
+      hr style="margin-top: 0"
+      .forms-container
+        = render 'entries/form', entry: @new_entry
+
+  .row
+    .small-12.medium-8.columns.medium-centered
+      ul#example-tabs.tabs data-tabs=""
+        li.tabs-title.is-active
+          a href="#my-entries"
+            | My Entries
+            - if @own_entries.count.positive?
+              span.badge style="margin-left: 5px; border-radius: 10%" class="badge" = @own_entries.count
+        li.tabs-title
+          a href="#community"
+            | Community
+            - if @community_entries.count.positive?
+              span.badge style="margin-left: 5px; border-radius: 10%" class="badge" = @community_entries.count
+      .tabs-content data-tabs-content="example-tabs"
+        #my-entries.tabs-panel.is-active
+          ul.entries
+            - @own_entries.each do |entry|
+              = render 'entries/entry', entry: entry
+        #community.tabs-panel
+          - if community_feature_unlocked?
+            ul.entries
+              - @community_entries.each do |entry|
+                = render 'entries/community_entry', entry: entry
+          - else
+            .content style="min-height: auto"
+              p style="margin: 0; text-align: center" Community Feature Unlocked at Level #{PointSystemHelper::COMMUNITY_FEATURE_UNLOCKS_AT_LEVEL_NUM}
+

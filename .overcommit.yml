@@ -1,0 +1,93 @@
+CommitMsg:
+  CapitalizedSubject:
+    enabled: true
+
+  EmptyMessage:
+    enabled: false
+
+  TrailingPeriod:
+    enabled: true
+
+  TextWidth:
+    enabled: false
+
+PreCommit:
+  ALL:
+    on_warn: fail
+
+  AuthorEmail:
+    enabled: true
+
+  AuthorName:
+    enabled: true
+
+  MergeConflicts:
+    enabled: true
+
+  TrailingWhitespace:
+    enabled: true
+    exclude:
+      - '.DS_Store'
+      - '**/.DS_Store'
+      - 'doc/**/*'
+      - 'doc/*'
+      - '**/*svg'
+      - '**/*png'
+      - '**/*mp4'
+      - '**/*ico'
+
+  LineEndings:
+    enabled: true
+    exclude:
+      - '.DS_Store'
+      - '**/.DS_Store'
+      - 'doc/**/*'
+      - 'doc/*'
+      - '**/*svg'
+      - '**/*png'
+      - '**/*mp4'
+      - '**/*ico'
+
+  HardTabs:
+    enabled: true
+    exclude:
+      - '.DS_Store'
+      - '**/.DS_Store'
+      - 'doc/**/*'
+      - 'doc/*'
+      - 'lib/point_system.rb'
+      - '**/*svg'
+      - '**/*png'
+      - '**/*mp4'
+      - '**/*ico'
+      - 'vendor/**/*'
+
+  YamlSyntax:
+    enabled: true
+
+  FixMe:
+    enabled: true
+    keywords: ["FIXME"]
+    exclude:
+      - .overcommit.yml
+
+  RuboCop:
+    enabled: true
+    command: ['bundle', 'exec', 'rubocop', '-c', './.rubocop.yml']
+
+  RailsBestPractices:
+    enabled: true
+    command: ['bundle', 'exec', 'rails_best_practices', '--config', 'config/rails_best_practices.yml']
+
+  ScssLint:
+    enabled: true
+    command: ['bundle', 'exec', 'scss-lint', './app/assets/stylesheets/']
+
+  BundleAudit:
+    enabled: true
+    command: ['bundle', 'exec', 'bundle-audit', 'check', '--update']
+    on_warn: fail
+
+PostCheckout:
+  BundleInstall:
+    enabled: true

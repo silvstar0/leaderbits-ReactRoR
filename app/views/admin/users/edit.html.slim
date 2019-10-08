@@ -1,0 +1,8 @@
+- content_for(:page_title, "Admin : Users : #{@user.name}")
+/ .row.full-width
+/   .medium-6.columns
+/     h1= "Edit #{@user.email} id: #{@user.id}"
+
+.row.full-width
+  .small-12.columns
+    = render 'form', user: @user

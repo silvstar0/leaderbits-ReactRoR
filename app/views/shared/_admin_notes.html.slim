@@ -1,0 +1,11 @@
+div
+  .admin-notes-status.pull-right style=(user.admin_notes_updated_at ? '' : 'visibility: hidden')
+    span.text.last-updated style=(user.admin_notes_updated_at ? '' : 'display: none')
+      | Last updated&nbsp;
+    span.text.saving style="display: none"
+      i.fa.fa-spinner.fa-spin
+      |&nbsp;Saving...&nbsp;
+    time.timeago datetime=user.admin_notes_updated_at&.getutc&.iso8601
+  = form_tag admin_user_notes_path, method: 'put', remote: true do
+    = text_area_tag 'content', user.admin_notes, rows: 5, class: 'admin_notes', placeholder: "Custom Notes on #{user.first_name}"
+    = hidden_field_tag 'user_id', user.id

@@ -1,0 +1,181 @@
+- content_for(:page_title, 'Admin : Users')
+.row.full-width
+  .medium-6.columns
+    h1 Users
+  - if policy([:admin, User]).new?
+    .medium-6.columns.text-right
+      = link_to  [:new, :admin, :user], class: 'button success' do
+        = fa_icon 'plus'
+        | &nbsp; New User
+
+.row.full-width
+  .small-12.columns
+    = render 'shared/admin/search_form', resource: :users
+
+.row.full-width
+  .small-12.columns
+    ul.tabs#example-tabs data-tabs=""
+      - all = @base_relation_without_type_filters.size
+      - active = @base_relation_without_type_filters.active_recipient.count { |user| user.momentum >= 25 }
+      - mentors = @base_relation_without_type_filters.where('users.id IN (SELECT mentor_user_id FROM organizational_mentorships)').size
+      - mentees = @base_relation_without_type_filters.where('users.id IN (SELECT mentee_user_id FROM organizational_mentorships)').size
+      li.tabs-title
+        - if !users_active_tab? && !users_inactive_tab? && !users_mentors_tab? && !users_mentees_tab?
+          a href=admin_users_path aria-selected="true"
+            | All&nbsp;
+            span.badge style="border-radius: 10%" = all
+        - else
+          a href=admin_users_path
+            | All&nbsp;
+            span.badge style="border-radius: 10%" = all
+      li.tabs-title title="Active means valid LeaderBits recipient, >= 25% momentum"
+        - if users_active_tab?
+          a href=admin_users_path(active: 1) aria-selected="true"
+            | Active&nbsp;
+            span.badge style="border-radius: 10%" = active
+        - else
+          a href=admin_users_path(active: 1)
+            | Active&nbsp;
+            span.badge style="border-radius: 10%" = active
+      li.tabs-title
+        - if users_inactive_tab?
+          a href=admin_users_path(inactive: 1) aria-selected="true"
+            | Inactive&nbsp;
+            span.badge style="border-radius: 10%" = all - active
+        - else
+          a href=admin_users_path(inactive: 1)
+            | Inactive&nbsp;
+            span.badge style="border-radius: 10%" = all - active
+      li.tabs-title
+        - if users_mentors_tab?
+          a href=admin_users_path(mentors: 1) aria-selected="true"
+            | Mentors&nbsp;
+            span.badge style="border-radius: 10%" = mentors
+        - else
+          a href=admin_users_path(mentors: 1)
+            | Mentors&nbsp;
+            span.badge style="border-radius: 10%" = mentors
+      li.tabs-title
+        - if users_mentees_tab?
+          a href=admin_users_path(mentees: 1) aria-selected="true"
+            | Mentees&nbsp;
+            span.badge style="border-radius: 10%" = mentees
+        - else
+          a href=admin_users_path(mentees: 1)
+            | Mentees&nbsp;
+            span.badge style="border-radius: 10%" = mentees
+
+    .tabs-content data-tabs-content="example-tabs"
+      .tabs-panel.is-active#panel1
+        table.stack.index width="100%"
+          thead
+            tr
+              / th= order_by_link 'ID', 'users.id'
+              th= order_by_link 'Email', 'users.email'
+              th= order_by_link 'Name', 'users.first_name'
+              th= order_by_link 'Account', 'organizations.name'
+              th Next LeaderBit
+              th Created
+              th Roles
+              th
+
+          tbody
+            - @users.each do |user|
+              tr class=admin_user_item_class(user) alt=admin_user_item_tooltip(user) title=admin_user_item_tooltip(user)
+                / td= user.id
+                td style="vertical-align: top"
+                  .show-for-small-only
+                    div style="height: 8px"
+
+                  = link_to user.email, admin_user_path(user)
+                  br
+                  small
+                    | Level: #{PointSystem.new(user).parse!.current_level_num}
+                  br
+                  small
+                    | Momentum: #{user.momentum}%
+                  br
+                  small = link_to pluralize(user.entries.count, 'entry'), entry_groups_path(user_uuid: user.uuid), title: 'Display all entries from this user'
+                td style="vertical-align: top; min-width: 130px" = user.name
+                td style="vertical-align: top; min-width: 130px" = user.organization.name
+                td style="vertical-align: top"
+                  - if user.schedule_id.present?
+                    - if user.active_scheduled_leaderbits_receiver?
+                      - leaderbit = user.next_leaderbit_to_send
+                      - if leaderbit.present?
+                        - send_at = user.next_leaderbit_to_be_sent_at.stamp('Mon 29 Sep 23:59')
+
+                        div
+                          .hide-for-small-only.text-center
+                            div style="width: 123px"
+                              = video_cover leaderbit
+                            div style="margin-top: 4px"
+                              = send_at
+
+                          .show-for-small-only
+                            div Next LeaderBit:
+                            div style="width: 123px"
+                              = video_cover leaderbit
+                            div
+                              | at #{send_at}
+                  - else
+                    | *No Schedule*
+
+
+                td style="vertical-align: top"
+                  time.timeago datetime=user.created_at.getutc.iso8601
+                  - if user.created_by_user.present?
+                    | &nbsp;
+                    font by&nbsp;
+                    = link_to user.created_by_user.name, [:admin, user.created_by_user], style: "text-decoration: underline"
+
+                td style="vertical-align: top"
+                  .show-for-small-only
+                    | Roles:
+                  = user.humanized_roles
+
+                td.action
+                  ul.table-options.button-group.actions.even
+                    / li
+                    /   = link_to password_reset_admin_user_path(user), class: 'button secondary', style: 'text-align: left; background-color: #ff9999' do
+                    /     | Password
+                    / li
+                    /   hr style="margin: 5px 0"
+
+                    li
+                      = link_to [:admin, user], title: 'View', class: 'button info', style: 'text-align: left' do
+                        = fa_icon 'eye'
+                        | &nbsp;View
+
+                    - if policy([:admin, user]).edit?
+                      li
+                        = link_to [:edit, :admin, user], title: 'Edit', class: 'button success', style: 'text-align: left' do
+                          = fa_icon 'edit'
+                          | &nbsp;Edit
+
+                    - if policy([:admin, user]).switch_user_as?
+                      li
+                        = link_to "/switch_user?scope_identifier=user_#{user.id}", title: 'Sign In', class: 'button warning', style: 'text-align: left' do
+                          = fa_icon 'hand-lizard-o'
+                          | &nbsp;Sign In
+                    /
+                    / - if policy([:admin, user]).toggle_discard?
+                    /   li
+                    /     = link_to toggle_discard_admin_user_path(user), method: :post, class: 'button secondary', data: { confirm: "Are you sure to continue?" }, style: 'text-align: left' do
+                    /       = fa_icon 'pause-circle'
+                    /       - if user.discarded?
+                    /         | &nbsp;Unlock
+                    /       - else
+                    /         | &nbsp;Lock
+                    /
+                    /
+                    / - if policy([:admin, user]).destroy?
+                    /   li
+                    /     = link_to [:admin, user], method: :delete, title: 'Destroy', class: 'button alert', data: { confirm: 'User and all of its data would be completely destroyed. Are you sure to continue?' }, style: 'text-align: left' do
+                    /       = fa_icon 'remove'
+                    /       | &nbsp;Destroy
+
+    .row.full-width
+      .large-12.columns.text-center style="margin: 15px 0"
+        = will_paginate @users
+        = "Total Entries: #{@users.total_entries}"

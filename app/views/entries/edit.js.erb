@@ -1,0 +1,4 @@
+$("li#<%= dom_id(@entry) %> .replaceable").html("<%= j(render 'form', entry: @entry) %>");
+
+domReadyOrPjaxComplete();
+ReactRailsUJS.mountComponents();

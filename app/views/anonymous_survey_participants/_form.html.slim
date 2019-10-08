@@ -1,0 +1,15 @@
+= simple_form_for(@anonymous_survey_participant, html: {novalidate: false}) do |f|
+  / = f.error_notification
+  / = f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present?
+
+  .form-inputs.text-left
+    = f.input :name, as: :string, required: true, placeholder: "Name", class: 'name'
+    = f.input :email, as: :email, required: true, placeholder: "Email", class: 'email'
+    = f.input :role, as: :select, collection: role_options, placeholder: "Role", class: 'role', include_blank: false, html: { class: 'required' }
+    = hidden_field_tag 'controller_name', params[:controller_name] || controller_name
+    = hidden_field_tag 'action_name', params[:action_name] || action_name
+
+  .form-actions.text-center
+    = f.button :submit, 'Save', class: 'btn primary'
+
+    = link_to "Cancel", {controller: params[:controller_name], action: params[:action_name]}, 'data-tg-refresh-on-success' => 'dynamic-list-container dynamic-list-container-footer', 'data-tg-remote' => 'get', 'data-tg-refresh-on-error' => "dynamic-list-container dynamic-list-container-footer", class: 'clear button secondary small'

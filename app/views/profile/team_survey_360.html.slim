@@ -1,0 +1,89 @@
+- content_for(:page_title, '360 Team Survey')
+
+.row.columns
+  /.small-12.medium-6.columns class=(@user.anonymous_survey_participants.present? ? '' : 'medium-centered')
+  - unless params[:user_id].present?
+    .small-12.medium-6.columns class=(@user.anonymous_survey_participants.present? ? '' : 'medium-centered')
+      h3 360 Team Survey
+      hr style="margin-top: 0"
+      div style="background-color: #F5F5F5; padding: 38px"
+        .row
+          .small-4.columns style="text-align: center"
+            div
+              svg height="72px" version="1.1" viewbox=("0 0 88 72") width="88px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                g#Page-1 fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"
+                  g#360-Team-Survey transform="translate(-674.000000, -140.000000)"
+                    image#icons8-comments-100 height="100" width="100" x="669" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABGdBTUEAALGN5fIAKQAAEO1JREFUeAHtXXl8FEUWfj2TYwi5DyAnIPchPyKgJAQxBFBBDmW5IrAgu4AcwsK64KqroO7CKq4KC4gcCgKCEA4VuYOQC2QBFSKgopBjIJmZJJBj7tpXE3rSmfTMdCczOUzXH+k6Xl3f61fvVfWrCYAUJAQkBCQEJAQkBCQEJAQkBCQEJAQkBCQEJAQkBCQEJAQkBCQEJAQkBJo+AkzTn0LVDHYTIo9RKXubZSSJIUwCYUgHfIYDEH8CjAknW4Z5txlgrmHe92CWpRaF3MscLuusq2qlYWO/C4Zk3LnVEeTyRQj0RGAgSAykhJASpN8FZvgwvlXkBTF13UHbpBmSqcnphUKxHAgZyTCMrK4AIXO+NsvJ3xOCoi7Vta3a1m+SDEklxEOhVr5EAF5hGPCq7eR56xFiBIZZo72reymxfXstL40bM5scQzKLlO3ARFJwaYp1Iy6oYuASMRnHxbeO+dmt/dg03qQYkqXK704YOIpziLSZh1uShIAa9dKIuNDws27pgKfRJsOQs4X5fdFMOoxLVAjPPNyWRYCUMUSWVF9MaRIM+bagINwgN1zAt7WN25C3aTg2sBV4y+TVclHp35DJZB2qZbo44eHi9lze3HlCPPVq5e76ZAadxMXigupzoTql3BhfPdP1qUbPEINGuQyXqQRXT51PAvj60JlNFubEBrXq7R0iLzebzW6Vkka9ZN23qK6iReXNB1a956FJzMjMffsHR3/nrr4bt4SYyJvuZgYrKeUmI3xfUgg0TQNdstgyDvgUr0uoSzhZaCG7ULc0WglJVyt7MsT8Pe7AG9UYEXw8HCB9BgRFXazGFRcl6nzc4KJx1GiGIeTZhmQGlY7+weFWiWEHSMckMzGz2LSrn43q7WMnh+8gk6nOv4Fzb8fmNaongaKi4NJwd5wS16sOuUwue5WqQvBY3PwEHofH4WLUBjdeeDyO0BNQ4cp8E4HPQGbcbrTMoG8GnigHFPs+grHTNOnKUC8MSb1zx1fhYZx7Tw2LQUbC6IxY0bTGGIjBvBic3EBa3tiDjJDBOMamx5D0wrwxDGP6CEEOZXE2GYxwNS0Nrh49CXeuXYfikmLQGwwNygMvT08IDAiENl27QJehidA1IQHkno7eV6aXOwbstleRfr2L1uS/jRbiQlx+rP1cST0NJz9YA2q1Gtp7KKCbR0sIkXviRsNK4o55Om1Th8e7apMBso1l8JtRC6GhoTB4wVzoPuhR3rqo567Eh0b25C2sQ6ZbULivlLciHyazYyO44z2+ej2k702BPl5+MNGnNUTJG8d+jx0j+8w16WB7+W24pC+FAWOfgSHzZwNT41wLVPGhEbj8ujY4ksla95SlUX7AZQZtiDIjc+8+mNqyDTypqNcDW9HzoC/KEr+2cEirhu04Ziq8Q1+YW60dzPKrluGihMsZklmYOwrHNo87PrpMUcngMqPQpIcDWhVc1N+DYpQeMy4ZDRlkiHogSkEsSu8YRRiE4jI6/P6Ls21PCkTH9oauAwdUDRGPczLUeSdkBFb2D42k32hcEly6ZGWpVP5mRn8FG41iR0cV+NpxydCuVA9/9aNGFMB3uBSsK8uDod5BkKAIhDCZJ1BAGjLQF6IQdUiarhiOaTUwxy8Kenn6Woa08t5NyPHzhjmf7wC5B887TOCIUUZmDgyOvFXXOcjq2gC3PgH9fC4zaNmPZ9JArVFbdAZNU8mgzFjsFw1jfVpBa5lXgzODjou+EK3lXpYxLfKPgXWleaBCBtGQ3KKNxQi5dibdkq7xh4HH5QR+SNcon6pRJjLDZQxJRccD7Humbf/Xj6darClWge/HZWqYIhg6efjYkjaadGcc2xAc44GKQsuYoj28oR1ahNdPpNodI+6n/GVm874MVf5Uu0QCClzGEIVGORRfsso1idOx8uo1i2nLZtHlKsE7gE022ucArwC4ZCi1jo+a53nZV61p3gjDeDBANuNJw3DecgGZLmMI9oU77Jrh7t0SCJFVrbtFZiOEos5o7KEVKnUNjpUNoTgHOhengWHkaPbvsDjvOSWuSeBKhvSr2TyATq8HT44PG1WeDa3A+cZpm0fHyLX86BzoXIQENPkDwMPjv0JobWnqxBC6AcwqVA7OUOe/hw1zbELbbppfGo2bYRma3JFiZ15rhuA6+WSWWnmByMgJ7HwBdtxCbOdNkf79cRPhyAeroVSjcT58wix0TlSdQjRD6BF6hiqPiuMhlOre1Zv7/afe2bQWOrQKg/XT/gy52T86njCBxLTC3C6OiaqXimIIZcZdTfBuXCPnVG+m+aTCoyMhedZ0WLb635Dy+htQUlBpGvMhgDgxcoZ5nK/MXl6V+WOPgpN/Tx2EZ1QwmpNliXIdA2zLfq/pbr16wrBRwyFjx2fQ/bFBcObjrXArO5t+aoPobt2g37ix0GVAHKDrK7U+PxCKg2CGUNsalfhMvgOOGk5lQntv4nSJw4fB5+Omws3z52HGguchtv/DFoZcOvstfPTeWsi/ehUSZ0wXdUQviCHUmspUK/9FRZBiyOMeA6xDWRPHWNTwI2KiIGnEMJi+cA4EBAVZ68YNHgQP9n0IZo+dDG06dcJP1MKDIIZkqvOS0NfC+oWsuUqELaxyuRwWLnvZNtuS9vX3g9l/Wwi7tu/x5yWwk8nLEHSX/AWF4QE7dazZrFRwdQhXemh5cw4PxT0Mq/7xFt8qbxcWXobYenhnqvIvoIlr94IMV2K4cbu9NoMCZU4enDudBib0FXgmrt/Z0pKy145mZx92NnVehrCVWEnRmoymS87dLNlq1mcFumc2x3DudDrk/noTHh87Ch5DxX8+LevhDW+/v3dU34dWHjx/YbkjTBwyhJUU3AjqcQmTc99+btxRB82x7LefbsD4GVOsU08a+ST0TejvM3tM8pLHe3Q5feTKtVPWQpuIsI0hA2puPaon+NwsuTTNOc5lBosDtcJmL13k4+cf8Dabx/d0KCFsBdRKORi33l6SpINFRtyzV78+UF5eYbVW+WoLkxCANL7KUp44BLwV6H2GX7Ac1RLGELPsoKNGpDJhCFzMOgcKhc9lR9SCGNI/tM1p5OtFRw1xy4x6HaRu2gJrJk4BGW6eDjKlcMCgAQMxc8maVbz07j1Yt+I/ZaWlJa85mrgghqCFhUiSJY4aYssMOh1sW/AilP5yA1555w3Yk34MXt34PvzaIwZW6G+zZM3miRyAdHT0mP1McllFecWaI5evfuVo8qJ2kfhl8H2s8IKjBk9t+QRKf/4Flq+pbkzgeRi8Ne9FyMzIgjj/MPhBWwIGkwkebBEAyTJ0cm6EbqWT1FdgZ0gPy3Spr9bmMqV16mGREbBi305LeunTk6AwL99axo14+/hAVNcuJlVO/oTdp07t5ZbxxQVZWWzF3ODwRdHq/AdQM9n1P7p85LhFMtg67JOeSz67cDacxXW0Y/JoeP7pyiaO7/8Slm3aBm+1iIFgjjMEW6+xPV8/fcI6pBxt5cZ37s5t1jw7ETn+LJRid3CkneKqbFEMGY/3CtCrfUyURrkKJYV+tgWT0QgnP9wIlw4fAdxIQmlxCbTr+EBVD5xY+04dYfeZI9DCp+pr74SZ0ywU2z5NgQWy1hzqho3aOmNQ/eftVfvfucHf7foDzmi7s1mJYghtjDIFHwszVXm4FjIrUzdsiq3Iz4X1eyrfkrRjqeDl7W23Xy4zWKIhY56C3R99jO7LjYchd9BrMVheBY8KXYL8/QPZIYt+4k2xzkIqVfUohPo+zbAePaLfHjF6kVar64ZZ5k8O75MFh1V6tI9+dryIlixXiuEn/DatR0lbqc2HaV6hFvdSUY24gThdXwKxnlUO7tnoNBfZ/eG69GT1d3bUiCAri9sAZYa3wvOH8TP+OOTjr1MU+8+lWpnBpRMa37VxK7T084W1+3ZAt0kj4U1dPtwxC/N/EtqHWLprxnI4jkp8lCLUUvWWSQs38c5IpyGDxTZlpcclXpABJVpCfH1bbhg7LbnluOcmi65rHR0nQnevD/apPNmfghdjFC18YPfWFJgvC+NQuT9KdUYBLlNUMo5VqC3e7/RKAg07y+9YblR1Taj9T53gJdcqE83BdESDqtOWJw4b85ToevbG8PSUidWKqD7Zu+ETAF9+hiws+skiQdRr/r2gTpa6bB5N2Muv1glPgnoqUiuvN15BeDOwg9Xd9VCFynKTatLipfxXEXja4s8iDnfobB2XAcs2WNcnfoPBHb39L40sE7j98OXRcnv53LqO4l8hM3aUF0DCfQ8SR7ROywgj6PhJtA7xUii+Obr/S7d9eTq270vopQhwOj93EuSgzliBl3Q+xaUqfvxYSJo7q27dESjWyXUHhDQiWkLKy++9sOujLefwF1d8huLSFdKqUvEJ6cwRjbpABcf3fQEHN38Kryn4DZIylJz/4RU4d5yJ0Vu49DLRj4YyiwKnt3DpMkV9q+ocGLIiMah9sZB2BGl+24aopdXSr8V6vVY32GgwKmzL2TR7vLBq3iJYvOZdoEcMNPxzz3ZYOmYCqO9U/UiYhwfeE8eN18teEXiMUnMDZkTAXi25YbmyzLbvyqflnnpgEER06wKdkxKhS8IAJ/fUhfWO+4+zurv6xxIF/sJprRgiZCi4cTyFRyyDhNBSmpPrNkD2rhRYHcS/f9qFy8cXuiKYuWk9tO7AfxIgtK/6osPjO/ywZ4yLD43JE9qnaB0itGE08zYLpaV0ZSgtAXbOsjJ0JXi9TAWDZ0xrOsxAyTATQ38xzKA4uI0h/iGaz3CVuUU7cRboedh1dL/syHPvMA33BWvxAmbvIUkQP7lyyXPWXoOWowLHZWoJXaYSwtrmix2LaKUutIOeTE89eqssx8uQG53VObNlK5SVlcHQQOtne7iHZ0efVRTASW0R9HviCRi+dJHFb9ZZW24vJ+QbdKBW48sWiwPCwzf0swUGlyb4ET2rDxo99AcGBrYtqu043KZD6IAsN6zUynTcc9k1VXIuX4EtcxfAaDymGIfXpG/i74xQqUjVolHiJYehC+ZB7FO1vkNZW1x46+F8SszE2L02bz5vgzyZbmUI7e9sQW5ns5w5j0c5VSd19wdScOMGbJk1H3T4lbG7pw/cwvOiuygZfj4tofeoERCXPBF8Aht2T8Jihsygzglj8Qdn9rF57ni6nSF00Blq5Xgg5s/wI5W1Pw1+Ydv+4lKoUGvAH38WKTgyHFr37AFt+/SG6J4963hMwYGKEBOuKTvwB9KScYmRc0oERykzGBkzLy44Yq3gSrUktAJUy/qCq+H9kkVIvEpwBdcRzokLiVhnud8CZCe94C+qaVTSSP+nuNAIp59fRbVrh9htVpZtfwjKu/ii/YW+bbZlbklTySDkBcoM2j4+D3maPLti3jpUbs6PfrA+asFP5Iy5V30xg46z3iSEdkZDpjp3Au5RNoh+UyurC/qLZudd/GQ6HYFM4auQVngzQibzHIWMGYkItEcQ8KyG8aCnJ1j3BxnDnDKaDTvcqbz5xkXz6p0htNPMgpxO6LC1BXt3+d12lL8zeNNyalxQ+G+0r6YWGoQhFCRcOpgsdd40lJZ/oK5vR/PqFAi5aWbgpfjgCGo81M+yWKcB81duMIaww6H//cCoUk7E/6z2HC4ZjyKYwvVapQV1Gg8c1nkFt9nfl2EMbLtN9dngDOECR/9PiNHDmARmkoD5XdFM7YiS5ItMCkBmobVDStCEvYH65wr6OWXJ5eTwIwFRam4bUlxCQEJAQkBCQEJAQkBCQEJAQkBCQEJAQkBCQEJAQkBCQEJAQkBCQEJAQqDhEfg/fXjGGutYWIcAAAAASUVORK5CYII=" y="126"
+
+          .small-8.columns
+            p We use this data to personalize the leadership challenges you receive. This allows you to grow in the right areas so you make the most amount of progress possible in the shortest amount of time.
+
+      .row style="margin-top: 10px"
+        = render 'shared/team_survey_360'
+
+  - if @user.anonymous_survey_participants.present?
+    .small-12.medium-6.columns class=(params[:user_id].present? ? 'medium-centered' : '')
+      h3 Survey Anonymous Results
+      - if (current_user.system_admin? || current_user.leaderbits_employee_with_access_to_any_organization?) && params[:user_id].present?
+        .text-right style="color: red"
+          | On User: #{@user.name}
+      hr style="margin-top: 0"
+
+      - if @combined_results_by_question.blank?
+        p
+          | We will show the results once at least 2 people answered.
+          br Please check back in later.
+
+      - responders_lookup = extract_responders @combined_results_by_question
+
+      table.unstriped
+        - @combined_results_by_question.each do |question_anonymous_survey_similarity_uuid, answers_and_average|
+          - question = direct_report_question(question_anonymous_survey_similarity_uuid) # Question.where(anonymous_survey_similarity_uuid: question_anonymous_survey_similarity_uuid).includes(:surveys).where('surveys.type = ?', Survey::Types::FOR_FOLLOWER).where('surveys.anonymous_survey_participant_role = ?', AnonymousSurveyParticipant::Roles::DIRECT_REPORT).first!
+          - if current_user.system_admin? || current_user.leaderbits_employee_with_access_to_any_organization?
+            - tag_msg = question.tags.collect(&:label).join(", ")
+            - if tag_msg.present?
+              tr style="background-color: #f1f1f1"
+                td colspan=2
+                  .text-right
+                    small style="cursor: default; color: red" title="NOTE: these tags are only visible to admins"
+                      | Tag:&nbsp;
+                    small style="cursor: default; color: red" title="NOTE: these tags are only visible to admins"
+                      = tag_msg
+
+          tr style="background-color: #f1f1f1"
+            - td_attrs = answers_and_average[:answers].size < 2 ? {colspan: 2} : {}
+            td.text-right style="padding: 0" *td_attrs
+              strong = raw question.title.gsub('%{name}', @user.first_name).gsub('%{name_possessive}', @user.first_name.possessive)
+              - if question.hint.present?
+                div
+                  small
+                    = raw question.hint
+            - if answers_and_average[:answers].size > 1
+              td
+                - #TODO figure out what was the issue here. Migration related?
+                - if question.right_side.to_i > 10
+                  - left_side = answers_and_average[:average].round
+                - else
+                  - left_side = answers_and_average[:average].round(1)
+
+                - value_text = "#{sprintf("%g", left_side)} / #{question.right_side}"
+                .progress role="progressbar" tabindex="0" aria-valuenow=left_side aria-valuemin="0" title="Average: #{value_text}" aria-valuetext=value_text aria-valuemax=question.right_side style="height: 1.5rem; width: 100px; margin: 0"
+                  - percent = left_side / question.right_side.to_f * 100
+                  span.progress-meter style="width: #{percent}%"
+                    - if meter_text_is_visible?(value_text, percent)
+                div style="color: #000; width: 100px; position: static; text-align: center"= value_text
+
+          - answers_and_average[:answers].each do |answer|
+            tr
+              td.text-right
+                = raw responders_lookup.fetch(answer.anonymous_survey_participant_id)
+              td style="width: 110px"
+                - left_side = answer.params['value'].to_i
+                - value_text = "#{left_side} / #{question.right_side}"
+                .progress role="progressbar" tabindex="0" aria-valuenow=left_side aria-valuemin="0" title=value_text aria-valuetext=value_text aria-valuemax=question.right_side style="height: 1.5rem; width: 100px; margin: 0"
+                  - percent = left_side / question.right_side.to_f * 100
+                  span.progress-meter style="width: #{percent}%"
+                    - if meter_text_is_visible?(value_text, percent)
+                div style="color: #000; width: 100px; position: static; text-align: center"= value_text
+          tr style='background-color: #000; height: 2px; width: 100%'
+            td style="padding: 0" colspan=2

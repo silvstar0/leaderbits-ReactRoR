@@ -1,0 +1,25 @@
+div style="text-align: center"
+  = image_tag 'boomerang.png', width: 70
+
+h2= @leaderbit.name
+
+= simple_format @leaderbit.desc
+
+- if @user_leaderbit_entries.count == 1
+  p style="font-size: 17px; line-height: 24px"
+    | Your ReflectDB Entry:
+- else
+  p style="font-size: 17px; line-height: 24px"
+    | Your ReflectDB Entries:
+
+- @user_leaderbit_entries.each do |entry|
+  div style="background: #F2F2F2; padding: 10px; font-size: 14px; color: #747474; text-align: left; margin-bottom: 20px"
+    = simple_format(auto_link entry.content)
+
+p
+  | How can you make the most of this challenge today?
+
+p #{link_to '>>Watch LeaderBit Challenge Again<<', leaderbit_url(@leaderbit.to_param, user_email: @user.email, user_token: @user.issue_new_authentication_token_and_return)}
+
+small
+  = do_not_forward_email_footer_message

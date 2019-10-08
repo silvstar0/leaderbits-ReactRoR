@@ -1,0 +1,12 @@
+p This message is a warning about leaders who don't have any LeaderBits employee who is responsible for replying to their entries.
+
+- @users.each do |user|
+  h4 style="padding-bottom: 0; margin-bottom: 3px"
+    = link_to user.name, admin_user_url(user)
+
+  p style="padding-top: 0; margin-top: 0"
+    = user.schedule.name
+    br
+    = user.organization.name
+    br
+    | created #{time_ago_in_words(user.created_at)} ago

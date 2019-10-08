@@ -1,0 +1,66 @@
+// Small only
+@media screen and (max-width: 39.9375em) {
+  .reply-button {
+    font-size: 12px;
+  }
+}
+// Medium and up
+@media screen and (min-width: 40em) {
+  .reply-button {
+    font-size: 12px !important;
+    font-weight: 400;
+  }
+}
+
+
+// Medium only
+@media screen and (min-width: 40em) and (max-width: 63.9375em) {
+  .reply-button {
+    //font-size: 14.4px;
+    font-size: 18px;
+  }
+}
+
+// Large and up
+@media screen and (min-width: 64em) {
+  .reply-button {
+    font-size: 20px;
+  }
+
+  .reply-button {
+    font-size: 18px !important;
+    font-weight: 600;
+  }
+}
+
+@media only screen and (max-width: 40em) {
+  // line 158, ../bower_components/foundation/scss/foundation/components/_reveal.scss
+  dialog,
+  .reveal-modal {
+    height: 100vh;
+    min-height: 100vh;
+  }
+}
+
+.mark-entry-as-read-container {
+  align-items: center;
+  background-image: linear-gradient(-180deg, #fefeff 0%, #f4f5f6 100%);
+  border: 1px solid #1779ba;
+  border-radius: 1px;
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, .50);
+  color: #606979;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  margin: 0 auto;
+  -ms-flex-pack: center;
+  text-align: center;
+  width: 100%;
+
+  a {
+    color: #1779b9;
+  }
+}
+

@@ -1,0 +1,14 @@
+p= "#{@recipient_user.first_name},"
+
+p #{@user.first_name} is making progress each week as a leader. Here is the proof. Recently #{@user.first_name} has taken the following actions:
+
+- token = @recipient_user.issue_new_authentication_token_and_return
+
+- @leaderbit_logs.each do |leaderbit_log|
+  = render 'shared/leaderbit_log_email_report_line', leaderbit_log: leaderbit_log, recipient_user: @recipient_user, token: token
+
+p Each week #{@user.first_name} takes action and completes leadership challenges in the LeaderBits program.
+
+p See what #{link_to 'LeaderBits.io', 'https://leaderbits.io'} is all about.
+
+= leaderbot_footer_message

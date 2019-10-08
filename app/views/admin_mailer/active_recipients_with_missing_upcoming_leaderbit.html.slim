@@ -1,0 +1,22 @@
+p This message is an early warning with the list of users that wouldn't receive new LeaderBits because currently there is no more LeaderBits to send to them. It means that user has received all the LeaderBits from the corresponding schedule and we've already notified about all the unfinished LeaderBits.
+p Leader still receives a LeaderBit in case new LeaderBit is added to the corresponding schedule before scheduled send time.
+
+- @users.sort_by { |u| u.next_leaderbit_to_be_sent_at }.each do |user|
+  h4 style="padding-bottom: 0; margin-bottom: 3px"
+    = link_to user.name, admin_user_url(user)
+    | &nbsp;@ #{user.organization.name}
+
+    small
+      | &nbsp;|&nbsp;
+      = user.schedule.name
+      | &nbsp;schedule
+
+  p style="padding-top: 0; margin-top: 0"
+    | &#9716;&nbsp;Created: #{time_ago_in_words(user.created_at)} ago
+    br
+      | &#8987; Send Time:&nbsp;
+      |#{user.next_leaderbit_to_be_sent_at.stamp('Mon 29 Sep 23:59')}&nbsp;
+      small
+        = user.time_zone.gsub(' (US & Canada)', '')
+        = "(<strong>in #{time_ago_in_words(user.next_leaderbit_to_be_sent_at)}</strong>)".html_safe
+

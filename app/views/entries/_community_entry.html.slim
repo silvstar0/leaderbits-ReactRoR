@@ -1,0 +1,52 @@
+li id="#{dom_id(entry)}" class="entry-item"
+  div style="background-color: #{EntryReply::Colors::GREY}; position: relative"
+    - cache [current_user, entry] do
+      .likes-counter
+        a href=toggle_like_entry_path(entry) data-remote=true data-method="post"
+          svg.liked style="display: #{current_user.favorited?(entry) ? 'block' : 'none'}" height="32px" version="1.1" viewbox=("0 0 32 32") width="32px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            g#Mobile fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"
+              |        
+              g#iPhone-X---Community-Active fill="#50E3C2" transform="translate(-23.000000, -1137.000000)"
+                |            
+                g#Reflect-DB-Entry-Copy transform="translate(8.000000, 1115.000000)"
+                  |                
+                  g#Like transform="translate(0.000000, 14.000000)"
+                    |                    
+                    path d="M15,40 L21.4,40 L21.4,20.8 L15,20.8 L15,40 Z M46.8848,26.168 L44.1056,36.624 C43.6464,38.6096 41.8784,40 39.8416,40 L24.6,40 L24.6,20.8336 L27.3504,10.92 C27.608,9.24 29.0544,8 30.7552,8 C32.6576,8 34.2,9.5424 34.2,11.4448 L34.2,20.8 L42.6208,20.8 C45.4352,20.8 47.5184,23.4256 46.8848,26.168 L46.8848,26.168 Z" id="like-[#1385]"
+                    |                
+                  |            
+                |        
+              |    
+          svg.disliked style="display: #{(current_user.voted_as_when_voted_for(entry) == nil || current_user.disliked?(entry)) ? 'block' : 'none'}" height="32px" version="1.1" viewbox=("0 0 32 32") width="32px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            g#Desktop fill="none" fill-rule="evenodd" opacity="0.5" stroke="none" stroke-width="1"
+              |        
+              g#iPhone-X---Community-Active fill="#50E3C2" transform="translate(-23.000000, -904.000000)"
+                |            
+                g#Reflect-DB-Entry transform="translate(8.000000, 882.000000)"
+                  |                
+                  g#Like transform="translate(0.000000, 14.000000)"
+                    |                    
+                    path d="M15,40 L21.4,40 L21.4,20.8 L15,20.8 L15,40 Z M46.8848,26.168 L44.1056,36.624 C43.6464,38.6096 41.8784,40 39.8416,40 L24.6,40 L24.6,20.8336 L27.3504,10.92 C27.608,9.24 29.0544,8 30.7552,8 C32.6576,8 34.2,9.5424 34.2,11.4448 L34.2,20.8 L42.6208,20.8 C45.4352,20.8 47.5184,23.4256 46.8848,26.168 L46.8848,26.168 Z" id="like-[#1385]"
+                    |                
+                  |            
+                |        
+              |    
+        .number
+          = entry.likes_score
+
+    .content.small-11.small-offset-1
+      div style="clear: both"
+        = auto_link(entry.content)
+
+      - if current_user.system_admin?
+        a onClick="javascript: this.style.display = 'none'; this.nextElementSibling.style.display = 'block';" style="display: block; font-size: 20px; height: 30px; width: 30px; text-align: center; border:1px solid #333; border-radius:50%; -moz-border-radius:50%; -webkit-border-radius:50%; margin-top: 10px;"
+          = fa_icon 'lightbulb-o'
+        div style="border: 1px dotted #333; display: none"
+          div
+            = raw "Author: #{link_to entry.user.name, user_path(entry.user)}"
+          div
+            = "Visibility: #{entry_visibility entry}"
+          div
+            = link_to "All entries", entry_groups_path(user: { uuid: entry.user.uuid}), title: 'Display all entries from this user'
+          div
+            = link_to "Admin profile", admin_user_path(entry.user), title: "Display user profile in admin interface(to see full statistics)"

@@ -1,0 +1,9 @@
+<% if @entry.errors.present? %>
+  $("li#<%= dom_id(@entry) %> .replaceable").replaceWith("<%= escape_javascript(render 'form', entry: @entry) %>");
+<% else %>
+  $("li#<%= dom_id(@entry) %>").replaceWith("<%= escape_javascript(render 'entry', entry: @entry) %>");
+<% end %>
+
+domReadyOrPjaxComplete();
+ReactRailsUJS.mountComponents()
+UnobtrusiveFlash.showFlashFromCookies();
